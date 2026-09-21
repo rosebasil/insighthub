@@ -1,0 +1,62 @@
+[
+  {
+    "week_id": "2026-w39",
+    "is_sample_data": true,
+    "major_changes": [
+      {
+        "title": "Possible fraud signal on Jeddah ride-allocation broadcast",
+        "detail": "An MSU shopper and a driver both independently suspect auto-clicker use on the ride-allocation broadcast. DIF shadowing in Amman is confirming the pattern.",
+        "severity": "critical"
+      },
+      {
+        "title": "Commission-breakdown visibility is the week's clearest cross-source theme",
+        "detail": "Raised in the driver NPS pulse, the app store review analysis, and directly in the WhatsApp group - drivers want to see the commission split before accepting a ride.",
+        "severity": "watch"
+      },
+      {
+        "title": "MSU/DIF fieldwork expanded to a third city",
+        "detail": "3 of 18 target cities are now live on the MSU survey, up from 2 last week.",
+        "severity": "positive"
+      }
+    ],
+    "recommended_areas": [
+      "Confirm or rule out the ride-allocation broadcast fraud signal before next week's reporting.",
+      "Scope a fix or in-app explainer for commission-breakdown visibility ahead of the September fee update.",
+      "Follow up with Odai (DIF - Amman) on the 0-completed-sessions blocker."
+    ]
+  },
+  {
+    "week_id": "2026-w38",
+    "is_sample_data": true,
+    "major_changes": [
+      {
+        "title": "Ride-allocation broadcast concern first surfaced",
+        "detail": "MSU round in Jeddah first flagged the concern later escalated to DIF shadowing in W39.",
+        "severity": "watch"
+      },
+      {
+        "title": "Support ticket resolution-time friction confirmed across all diary participants",
+        "detail": "All ten riders in the diary study cited resolution time as their top frustration.",
+        "severity": "critical"
+      }
+    ],
+    "recommended_areas": [
+      "Scope a follow-up quant survey on support resolution-time expectations.",
+      "Schedule DIF shadowing to confirm the Jeddah MSU signal."
+    ]
+  },
+  {
+    "week_id": "2026-w37",
+    "is_sample_data": true,
+    "major_changes": [
+      {
+        "title": "Baseline earnings sentiment established ahead of fee update",
+        "detail": "Driver earnings sentiment survey completed in Jordan ahead of the September commission fee change.",
+        "severity": "watch"
+      }
+    ],
+    "recommended_areas": [
+      "Re-run the earnings sentiment survey after the fee update lands to measure the shift."
+    ]
+  }
+]

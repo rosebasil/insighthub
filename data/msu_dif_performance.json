@@ -1,8 +1,8 @@
 {
   "meta": {
-    "2026-w39": { "cities_live": 3, "cities_total": 18 },
+    "2026-w37": { "cities_live": 1, "cities_total": 18 },
     "2026-w38": { "cities_live": 2, "cities_total": 18 },
-    "2026-w37": { "cities_live": 1, "cities_total": 18 }
+    "2026-w39": { "cities_live": 3, "cities_total": 18 }
   },
   "rows": [
     {

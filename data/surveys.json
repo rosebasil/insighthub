@@ -5,7 +5,7 @@
     "week_id": "2026-w39",
     "sent": 90000,
     "responses": 45000,
-    "dashboard_id": "dash-driver-nps"
+    "dashboard_id": "driver-voice-radar"
   },
   {
     "id": "sv-039-02",
@@ -13,7 +13,7 @@
     "week_id": "2026-w39",
     "sent": 150000,
     "responses": 58500,
-    "dashboard_id": "dash-pax-nps"
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
     "id": "sv-039-03",
@@ -21,7 +21,7 @@
     "week_id": "2026-w39",
     "sent": 12000,
     "responses": 3120,
-    "dashboard_id": "dash-pax-nps"
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
     "id": "sv-038-01",
@@ -29,7 +29,7 @@
     "week_id": "2026-w38",
     "sent": 88500,
     "responses": 47500,
-    "dashboard_id": "dash-driver-nps"
+    "dashboard_id": "driver-voice-radar"
   },
   {
     "id": "sv-038-02",
@@ -37,7 +37,7 @@
     "week_id": "2026-w38",
     "sent": 148000,
     "responses": 61000,
-    "dashboard_id": "dash-pax-nps"
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
     "id": "sv-037-01",
@@ -45,6 +45,6 @@
     "week_id": "2026-w37",
     "sent": 40000,
     "responses": 15600,
-    "dashboard_id": "dash-driver-earnings-sentiment"
+    "dashboard_id": "driver-in-app-reviews"
   }
 ]

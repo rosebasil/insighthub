@@ -1,0 +1,86 @@
+[
+  {
+    "id": "driver-voice-radar",
+    "title": "Driver Voice Radar",
+    "description": "Ongoing pulse survey capturing driver sentiment on earnings, app stability, and support quality across active markets.",
+    "audience": "Driver",
+    "country": ["KSA", "Jordan"],
+    "research_type": "Survey",
+    "topic": ["App stability", "Earnings", "Support"],
+    "date": "2026-08-20",
+    "reporting_period": "Q3 2026 (Jul - Sep)",
+    "sample_size": 1240,
+    "key_findings": [
+      "App stability complaints dropped 18% after the July release, but remain the #1 driver pain point.",
+      "Drivers in Jordan report lower satisfaction with support response time than drivers in KSA (-12 pts).",
+      "Earnings predictability, not absolute earnings, is the strongest driver of weekly retention."
+    ],
+    "critical": true,
+    "dashboard_id": "driver-voice-radar",
+    "report_url": "",
+    "is_sample_data": true
+  },
+  {
+    "id": "driver-in-app-reviews",
+    "title": "Driver In-App Reviews",
+    "description": "Thematic analysis of driver app store and in-app reviews, tagged by sentiment and topic to surface recurring friction points.",
+    "audience": "Driver",
+    "country": ["KSA", "Jordan"],
+    "research_type": "Reviews",
+    "topic": ["App stability", "Payment", "Navigation"],
+    "date": "2026-09-01",
+    "reporting_period": "August 2026",
+    "sample_size": 3860,
+    "key_findings": [
+      "Payment payout delays are the most cited negative theme (27% of negative reviews).",
+      "Navigation/GPS accuracy complaints are concentrated in Amman and Irbid.",
+      "Positive reviews increasingly mention the new trip-batching feature."
+    ],
+    "critical": true,
+    "dashboard_id": "driver-in-app-reviews",
+    "report_url": "",
+    "is_sample_data": true
+  },
+  {
+    "id": "passenger-activation-no-trips",
+    "title": "Passenger Activation – No Trips After Sign-Up",
+    "description": "Behavioral and survey research on passengers who sign up but never complete a first trip, to identify activation blockers.",
+    "audience": "Passenger",
+    "country": ["KSA", "Jordan"],
+    "research_type": "Interview",
+    "topic": ["Prices", "Low demand", "Onboarding"],
+    "date": "2026-08-05",
+    "reporting_period": "Q3 2026 (Jul - Sep)",
+    "sample_size": 45,
+    "key_findings": [
+      "Perceived price uncertainty before requesting a ride is the top-cited activation blocker.",
+      "Low driver availability at sign-up time causes immediate drop-off, especially outside Riyadh and Amman.",
+      "Passengers who see an upfront fare estimate during onboarding are notably more likely to complete a first trip."
+    ],
+    "critical": false,
+    "dashboard_id": "passenger-activation-tracking",
+    "report_url": "",
+    "is_sample_data": true
+  },
+  {
+    "id": "flights-booking-funnel",
+    "title": "Flights Booking Funnel Drop-Off",
+    "description": "Funnel analysis of the flights booking journey from search to confirmed booking, highlighting where passengers abandon the flow.",
+    "audience": "Passenger",
+    "country": ["KSA", "Jordan"],
+    "research_type": "Funnel Analysis",
+    "topic": ["Flights", "Payment", "Prices"],
+    "date": "2026-09-05",
+    "reporting_period": "August 2026",
+    "sample_size": 18500,
+    "key_findings": [
+      "The largest single drop-off (34%) occurs between fare selection and the payment step.",
+      "Passengers comparing multiple fare classes take 3x longer and abandon more often on mobile.",
+      "KSA passengers drop off earlier in search; Jordan passengers drop off later, at payment."
+    ],
+    "critical": true,
+    "dashboard_id": "flights-booking-funnel",
+    "report_url": "",
+    "is_sample_data": true
+  }
+]

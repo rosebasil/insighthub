@@ -46,11 +46,47 @@
   },
   {
     "week_id": "2026-w38",
+    "cohort": "DX_JOR",
+    "bullets": [
+      "DIF shadowing paused pending scheduling; MSU coverage in Amman held steady at 22 completed sessions.",
+      "No new fraud signals raised this week.",
+      "Needs attention: none this week."
+    ]
+  },
+  {
+    "week_id": "2026-w38",
     "cohort": "PAX_KSA",
     "bullets": [
       "Support ticket diary study closed; resolution-time friction was the dominant theme across all ten riders.",
       "No material change in passenger NPS this week.",
       "Needs attention: two diary participants dropped out mid-week - note for smaller sample when reporting results."
+    ]
+  },
+  {
+    "week_id": "2026-w38",
+    "cohort": "PAX_JOR",
+    "bullets": [
+      "In-depth interviews on fare/waiting-time disputes wrapped in Amman; synthesis feeding into the W39 waiting-time survey.",
+      "Referral program perception held steady versus W37.",
+      "Needs attention: none this week."
+    ]
+  },
+  {
+    "week_id": "2026-w37",
+    "cohort": "DX_KSA",
+    "bullets": [
+      "Driver onboarding friction interviews wrapped; drop-off concentrated in document verification step.",
+      "Baseline earnings sentiment survey went out ahead of the September fee update.",
+      "Needs attention: none this week."
+    ]
+  },
+  {
+    "week_id": "2026-w37",
+    "cohort": "PAX_KSA",
+    "bullets": [
+      "Monthly rider NPS pulse completed across Riyadh, Jeddah and Dammam.",
+      "No major shifts versus the prior month's read.",
+      "Needs attention: none this week."
     ]
   }
 ]

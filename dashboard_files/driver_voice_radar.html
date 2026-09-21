@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Driver Voice Radar - Sample Dashboard</title>
+<style>
+  body { font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 16px; background: #ffffff; color: #1B1B1F; }
+  h2 { color: #FF0095; margin-top: 0; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stat { flex: 1; min-width: 140px; background: #F5F6F8; border-top: 4px solid #FF0095; border-radius: 10px; padding: 12px 16px; }
+  .stat .value { font-size: 1.6rem; font-weight: 700; }
+  .stat .label { font-size: 0.8rem; color: #6B6F76; }
+  .bar-wrap { margin-bottom: 8px; }
+  .bar-label { font-size: 0.85rem; margin-bottom: 2px; display: flex; justify-content: space-between; }
+  .bar-bg { background: #F0F1F4; border-radius: 6px; height: 14px; overflow: hidden; }
+  .bar-fill { background: #FF0095; height: 100%; border-radius: 6px; }
+  .note { font-size: 0.75rem; color: #6B6F76; margin-top: 16px; }
+</style>
+</head>
+<body>
+  <h2>Driver Voice Radar</h2>
+  <p style="color:#6B6F76; margin-top:-8px;">Sample embedded dashboard &mdash; illustrates how a real HTML export (e.g. from Power BI or a notebook) renders inside the Hub.</p>
+
+  <div class="row">
+    <div class="stat"><div class="value">1,240</div><div class="label">Survey responses</div></div>
+    <div class="stat"><div class="value">72%</div><div class="label">Overall satisfaction</div></div>
+    <div class="stat"><div class="value">-18%</div><div class="label">Stability complaints (WoW)</div></div>
+    <div class="stat"><div class="value">KSA + Jordan</div><div class="label">Markets covered</div></div>
+  </div>
+
+  <h3>Top complaint themes</h3>
+  <div class="bar-wrap">
+    <div class="bar-label"><span>App stability</span><span>34%</span></div>
+    <div class="bar-bg"><div class="bar-fill" style="width:34%"></div></div>
+  </div>
+  <div class="bar-wrap">
+    <div class="bar-label"><span>Support response time</span><span>26%</span></div>
+    <div class="bar-bg"><div class="bar-fill" style="width:26%"></div></div>
+  </div>
+  <div class="bar-wrap">
+    <div class="bar-label"><span>Earnings predictability</span><span>21%</span></div>
+    <div class="bar-bg"><div class="bar-fill" style="width:21%"></div></div>
+  </div>
+  <div class="bar-wrap">
+    <div class="bar-label"><span>Payment payout speed</span><span>19%</span></div>
+    <div class="bar-bg"><div class="bar-fill" style="width:19%"></div></div>
+  </div>
+
+  <p class="note">Sample data for MVP demonstration. Replace this file with the real dashboard export at the same path to go live.</p>
+</body>
+</html>

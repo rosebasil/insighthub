@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jeeny-insights-hub",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "streamlit", "run", "Home.py", "--server.headless=true"],
+      "port": 8501
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "driver-voice-radar",
+    "title": "Driver Voice Radar",
+    "description": "Live tracking of driver sentiment themes, satisfaction score, and verbatim comment explorer.",
+    "audience": "Driver",
+    "market": "KSA & Jordan",
+    "last_updated": "2026-09-10",
+    "file": "dashboard_files/driver_voice_radar.html",
+    "source_note": "Sample dashboard bundled with the MVP to demonstrate embedding. Replace with the real export using the same filename.",
+    "is_sample_data": true
+  },
+  {
+    "id": "driver-in-app-reviews",
+    "title": "Driver In-App Reviews",
+    "description": "App store and in-app review volume, sentiment trend, and topic breakdown for drivers.",
+    "audience": "Driver",
+    "market": "KSA & Jordan",
+    "last_updated": "2026-09-08",
+    "file": "dashboard_files/driver_in_app_reviews.html",
+    "source_note": "Placeholder – no file uploaded yet.",
+    "is_sample_data": true
+  },
+  {
+    "id": "passenger-activation-tracking",
+    "title": "Passenger Activation Tracking",
+    "description": "Sign-up to first-trip conversion tracking with cohort and geography breakdowns.",
+    "audience": "Passenger",
+    "market": "KSA & Jordan",
+    "last_updated": "2026-09-06",
+    "file": "dashboard_files/passenger_activation_tracking.html",
+    "source_note": "Placeholder – no file uploaded yet.",
+    "is_sample_data": true
+  },
+  {
+    "id": "flights-booking-funnel",
+    "title": "Flights Booking Funnel",
+    "description": "Step-by-step conversion funnel for the flights booking journey, from search to confirmed booking.",
+    "audience": "Passenger",
+    "market": "KSA & Jordan",
+    "last_updated": "2026-09-12",
+    "file": "dashboard_files/flights_booking_funnel.html",
+    "source_note": "Placeholder – no file uploaded yet.",
+    "is_sample_data": true
+  }
+]
