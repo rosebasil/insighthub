@@ -75,8 +75,12 @@ with top_r:
     )
 
 week = get_week(selected_week_id)
-start = datetime.strptime(week["start_date"], "%Y-%m-%d").strftime("%b %-d")
-end = datetime.strptime(week["end_date"], "%Y-%m-%d").strftime("%b %-d")
+start_dt = datetime.strptime(week["start_date"], "%Y-%m-%d")
+end_dt = datetime.strptime(week["end_date"], "%Y-%m-%d")
+# "%-d" (no leading zero) is a glibc-only strftime extension and raises
+# ValueError on Windows, so build the "Mon D" string manually instead.
+start = f"{start_dt.strftime('%b')} {start_dt.day}"
+end = f"{end_dt.strftime('%b')} {end_dt.day}"
 with top_l:
     st.markdown(f"#### {week['label']}")
     st.caption(f"{start} – {end}")
