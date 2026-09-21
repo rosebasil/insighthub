@@ -1,0 +1,56 @@
+[
+  {
+    "id": "dash-driver-nps",
+    "name": "Driver NPS Tracker",
+    "category": "DX",
+    "description": "Weekly driver NPS by city, tenure cohort and vehicle type, with verbatim drill-down.",
+    "owner": "Market Intelligence - DX",
+    "link": "https://bi.jeeny.internal/dashboards/driver-nps",
+    "updated_at": "2026-09-20"
+  },
+  {
+    "id": "dash-pax-nps",
+    "name": "Passenger NPS Tracker",
+    "category": "PAX",
+    "description": "Rider NPS trend by country and city, segmented by ride frequency.",
+    "owner": "Market Intelligence - PAX",
+    "link": "https://bi.jeeny.internal/dashboards/passenger-nps",
+    "updated_at": "2026-09-20"
+  },
+  {
+    "id": "dash-msu-dif",
+    "name": "MSU & DIF Performance",
+    "category": "Ops",
+    "description": "Mystery shopper (MSU) and driver in-field (DIF) study volume, quality and QC flags by city.",
+    "owner": "Market Intelligence - Ops",
+    "link": "https://bi.jeeny.internal/dashboards/msu-dif-performance",
+    "updated_at": "2026-09-21"
+  },
+  {
+    "id": "dash-wa-issues",
+    "name": "WhatsApp & Technical Issues Log",
+    "category": "Ops",
+    "description": "Live log of manually logged WhatsApp and technical issues from KSA & Jordan groups.",
+    "owner": "Market Intelligence - Ops",
+    "link": "https://bi.jeeny.internal/dashboards/wa-technical-issues",
+    "updated_at": "2026-09-21"
+  },
+  {
+    "id": "dash-driver-earnings-sentiment",
+    "name": "Driver Earnings Sentiment",
+    "category": "DX",
+    "description": "Sentiment on earnings and commission structure pulled from driver surveys and app store reviews.",
+    "owner": "Market Intelligence - DX",
+    "link": "https://bi.jeeny.internal/dashboards/driver-earnings-sentiment",
+    "updated_at": "2026-09-18"
+  },
+  {
+    "id": "dash-pax-safety-sentiment",
+    "name": "Passenger Safety & Trust Sentiment",
+    "category": "PAX",
+    "description": "Rider sentiment on safety, trust and driver conduct from post-trip surveys and support tickets.",
+    "owner": "Market Intelligence - PAX",
+    "link": "https://bi.jeeny.internal/dashboards/passenger-safety-sentiment",
+    "updated_at": "2026-09-19"
+  }
+]

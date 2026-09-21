@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboards - Jeeny Insights Hub</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <img src="/static/img/jeeny-purple.svg" alt="Jeeny" />
+        <span>Insights Hub</span>
+      </div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/studies">Studies library</a>
+        <a href="/dashboards">Dashboards</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Dashboards</h1>
+          <div class="topbar__meta">Live BI dashboards maintained by market intelligence</div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <select id="filter-category">
+          <option value="">All categories</option>
+        </select>
+        <input type="search" id="filter-search" placeholder="Search dashboards..." />
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+
+      <div class="card-grid" id="dashboards-grid">
+        <div class="loading-state">Loading dashboards...</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/dashboards.js"></script>
+</body>
+</html>

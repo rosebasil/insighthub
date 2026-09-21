@@ -1,0 +1,90 @@
+[
+  {
+    "id": "iss-039-01",
+    "week_id": "2026-w39",
+    "source": "KSA",
+    "category": "Tech",
+    "status": "Reported out",
+    "description": "Driver-app wallet withdrawal failing on STC bank transfers - flagged by 3 drivers in group.",
+    "reference_type": "driver",
+    "reference_id": "DRV-KSA-88213",
+    "logged_date": "2026-09-20"
+  },
+  {
+    "id": "iss-039-02",
+    "week_id": "2026-w39",
+    "source": "JO",
+    "category": "Feedback",
+    "status": "Under review",
+    "description": "Rider disputes an extra waiting-time charge on a short Amman trip.",
+    "reference_type": "passenger",
+    "reference_id": "PAX-JOR-40217",
+    "logged_date": "2026-09-20"
+  },
+  {
+    "id": "iss-039-03",
+    "week_id": "2026-w39",
+    "source": "KSA",
+    "category": "Fraud signal",
+    "status": "Under review",
+    "description": "Driver suspects auto-clicker use on ride-allocation broadcast in Jeddah.",
+    "reference_type": "driver",
+    "reference_id": "DRV-KSA-91045",
+    "logged_date": "2026-09-21"
+  },
+  {
+    "id": "iss-039-04",
+    "week_id": "2026-w39",
+    "source": "KSA",
+    "category": "Tech",
+    "status": "Closed",
+    "description": "Duplicate SurveyMonkey collector link sent to 2 cities - corrected.",
+    "reference_type": null,
+    "reference_id": null,
+    "logged_date": "2026-09-19"
+  },
+  {
+    "id": "iss-039-05",
+    "week_id": "2026-w39",
+    "source": "JO",
+    "category": "Feedback",
+    "status": "New",
+    "description": "Driver asks why commission breakdown isn't shown before accepting a ride.",
+    "reference_type": "driver",
+    "reference_id": "DRV-JOR-30298",
+    "logged_date": "2026-09-21"
+  },
+  {
+    "id": "iss-039-06",
+    "week_id": "2026-w39",
+    "source": "KSA",
+    "category": "Feedback",
+    "status": "Under review",
+    "description": "Rider reports the safety-center link in-app opens a blank page on iOS.",
+    "reference_type": "passenger",
+    "reference_id": "PAX-KSA-55671",
+    "logged_date": "2026-09-21"
+  },
+  {
+    "id": "iss-038-01",
+    "week_id": "2026-w38",
+    "source": "KSA",
+    "category": "Tech",
+    "status": "Closed",
+    "description": "MSU shopper app crashed mid-survey in Jeddah - patched by eng.",
+    "reference_type": "driver",
+    "reference_id": "DRV-KSA-77120",
+    "logged_date": "2026-09-14"
+  },
+  {
+    "id": "iss-038-02",
+    "week_id": "2026-w38",
+    "source": "JO",
+    "category": "Feedback",
+    "status": "Closed",
+    "description": "Rider requested Arabic-language support ticket replies - routed to CX.",
+    "reference_type": "passenger",
+    "reference_id": "PAX-JOR-20984",
+    "logged_date": "2026-09-15"
+  }
+]

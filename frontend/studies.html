@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studies library - Jeeny Insights Hub</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <img src="/static/img/jeeny-purple.svg" alt="Jeeny" />
+        <span>Insights Hub</span>
+      </div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/studies">Studies library</a>
+        <a href="/dashboards">Dashboards</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Studies library</h1>
+          <div class="topbar__meta">Every market intelligence study, in one place</div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <select id="filter-week">
+          <option value="">All weeks</option>
+        </select>
+        <select id="filter-cohort">
+          <option value="">All cohorts</option>
+        </select>
+        <select id="filter-type">
+          <option value="">All types</option>
+        </select>
+        <input type="search" id="filter-search" placeholder="Search studies..." />
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+
+      <div class="card-grid" id="studies-grid">
+        <div class="loading-state">Loading studies...</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/studies.js"></script>
+</body>
+</html>

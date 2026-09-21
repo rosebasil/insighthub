@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "2026-w39": { "cities_live": 3, "cities_total": 18 },
+    "2026-w38": { "cities_live": 2, "cities_total": 18 },
+    "2026-w37": { "cities_live": 1, "cities_total": 18 }
+  },
+  "rows": [
+    {
+      "id": "perf-039-01",
+      "week_id": "2026-w39",
+      "name": "Tasneem",
+      "role": "MSU",
+      "city": "Amman",
+      "country": "JO",
+      "completed": 27,
+      "min_met": true,
+      "quality": 4.6,
+      "spread": 0.55,
+      "flags": "1 all-max",
+      "status": "REVIEW"
+    },
+    {
+      "id": "perf-039-02",
+      "week_id": "2026-w39",
+      "name": "Aya",
+      "role": "MSU",
+      "city": "Amman",
+      "country": "JO",
+      "completed": 24,
+      "min_met": true,
+      "quality": 3.8,
+      "spread": 0.4,
+      "flags": "0",
+      "status": "GOOD"
+    },
+    {
+      "id": "perf-039-03",
+      "week_id": "2026-w39",
+      "name": "Mahmoud",
+      "role": "MSU",
+      "city": "Amman",
+      "country": "JO",
+      "completed": 18,
+      "min_met": false,
+      "quality": 3.1,
+      "spread": 0.3,
+      "flags": "0",
+      "status": "BELOW MIN"
+    },
+    {
+      "id": "perf-039-04",
+      "week_id": "2026-w39",
+      "name": "Fahad",
+      "role": "MSU",
+      "city": "Riyadh",
+      "country": "KSA",
+      "completed": 31,
+      "min_met": true,
+      "quality": 4.1,
+      "spread": 0.45,
+      "flags": "0",
+      "status": "GOOD"
+    },
+    {
+      "id": "perf-039-05",
+      "week_id": "2026-w39",
+      "name": "Odai",
+      "role": "DIF",
+      "city": "Amman",
+      "country": "JO",
+      "completed": 0,
+      "min_met": null,
+      "quality": null,
+      "spread": 0,
+      "flags": "-",
+      "status": "SCORING PENDING"
+    },
+    {
+      "id": "perf-039-06",
+      "week_id": "2026-w39",
+      "name": "Salman",
+      "role": "DIF",
+      "city": "Riyadh",
+      "country": "KSA",
+      "completed": 0,
+      "min_met": null,
+      "quality": null,
+      "spread": 0,
+      "flags": "-",
+      "status": "SCORING PENDING"
+    },
+    {
+      "id": "perf-038-01",
+      "week_id": "2026-w38",
+      "name": "Tasneem",
+      "role": "MSU",
+      "city": "Amman",
+      "country": "JO",
+      "completed": 22,
+      "min_met": true,
+      "quality": 4.2,
+      "spread": 0.5,
+      "flags": "0",
+      "status": "GOOD"
+    },
+    {
+      "id": "perf-038-02",
+      "week_id": "2026-w38",
+      "name": "Fahad",
+      "role": "MSU",
+      "city": "Riyadh",
+      "country": "KSA",
+      "completed": 19,
+      "min_met": false,
+      "quality": 3.4,
+      "spread": 0.35,
+      "flags": "1 low-outlier",
+      "status": "BELOW MIN"
+    }
+  ]
+}

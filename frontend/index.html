@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeeny Insights Hub</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <img src="/static/img/jeeny-purple.svg" alt="Jeeny" />
+        <span>Insights Hub</span>
+      </div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/studies">Studies library</a>
+        <a href="/dashboards">Dashboards</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Jeeny Insights Hub</h1>
+          <div class="topbar__meta" id="week-range">Loading week...</div>
+        </div>
+        <div class="week-picker">
+          <label for="week-select">Week</label>
+          <select id="week-select"></select>
+        </div>
+      </div>
+
+      <section class="stat-cards" id="stat-cards">
+        <div class="loading-state">Loading...</div>
+      </section>
+
+      <section>
+        <h2 style="margin-bottom:14px;color:var(--navy);font-size:17px;">Highlights</h2>
+        <div class="highlights-grid" id="highlights-grid"></div>
+      </section>
+
+      <section class="row-2col">
+        <div class="panel">
+          <div class="panel__header">
+            <div>
+              <div class="panel__title">Surveys completed this week</div>
+              <div class="panel__subtitle">Click a survey to open its dashboard</div>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Survey</th><th>Sent</th><th>Responses</th><th>Completion</th></tr>
+            </thead>
+            <tbody id="surveys-body"></tbody>
+          </table>
+        </div>
+
+        <div class="panel" id="issues-panel">
+          <div class="panel__header">
+            <div>
+              <div class="panel__title">WhatsApp &amp; technical issues</div>
+              <div class="panel__subtitle">Manually logged from KSA &amp; JO groups this week</div>
+            </div>
+          </div>
+          <div class="status-bar" id="issues-status-bar"></div>
+          <div class="status-legend" id="issues-legend"></div>
+          <div class="issue-list" id="issues-list"></div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:20px;">
+        <div class="panel__header">
+          <div>
+            <div class="panel__title">MSU &amp; DIF performance</div>
+            <div class="panel__subtitle">Volume, quality and automated QC flags</div>
+          </div>
+          <span class="badge" id="perf-badge">-</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Shopper / Driver</th>
+              <th>Completed</th>
+              <th>Min met</th>
+              <th>Quality</th>
+              <th>Spread</th>
+              <th>Flags</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="perf-body"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/home.js"></script>
+</body>
+</html>

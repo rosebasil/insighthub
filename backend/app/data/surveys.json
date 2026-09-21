@@ -1,0 +1,50 @@
+[
+  {
+    "id": "sv-039-01",
+    "name": "Driver NPS",
+    "week_id": "2026-w39",
+    "sent": 90000,
+    "responses": 45000,
+    "dashboard_id": "dash-driver-nps"
+  },
+  {
+    "id": "sv-039-02",
+    "name": "Passenger NPS",
+    "week_id": "2026-w39",
+    "sent": 150000,
+    "responses": 58500,
+    "dashboard_id": "dash-pax-nps"
+  },
+  {
+    "id": "sv-039-03",
+    "name": "Waiting-Time Perception (JOR)",
+    "week_id": "2026-w39",
+    "sent": 12000,
+    "responses": 3120,
+    "dashboard_id": "dash-pax-nps"
+  },
+  {
+    "id": "sv-038-01",
+    "name": "Driver NPS",
+    "week_id": "2026-w38",
+    "sent": 88500,
+    "responses": 47500,
+    "dashboard_id": "dash-driver-nps"
+  },
+  {
+    "id": "sv-038-02",
+    "name": "Passenger NPS",
+    "week_id": "2026-w38",
+    "sent": 148000,
+    "responses": 61000,
+    "dashboard_id": "dash-pax-nps"
+  },
+  {
+    "id": "sv-037-01",
+    "name": "Driver Earnings Sentiment",
+    "week_id": "2026-w37",
+    "sent": 40000,
+    "responses": 15600,
+    "dashboard_id": "dash-driver-earnings-sentiment"
+  }
+]

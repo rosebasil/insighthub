@@ -1,0 +1,56 @@
+[
+  {
+    "week_id": "2026-w39",
+    "cohort": "DX_KSA",
+    "bullets": [
+      "Driver NPS pulse in-field this week; commission-breakdown visibility is still the top detractor theme from WhatsApp groups.",
+      "App store review analysis confirms the same theme: drivers want to see the commission split before accepting a ride.",
+      "Needs attention: possible auto-clicker / fraud signal on the Jeddah ride-allocation broadcast, flagged by MSU shopper Tasneem - under review."
+    ]
+  },
+  {
+    "week_id": "2026-w39",
+    "cohort": "DX_JOR",
+    "bullets": [
+      "MSU mystery shopper round live in Amman & Riyadh; scores tracking above the 4.0 quality bar so far.",
+      "DIF shadowing in Amman is actively investigating the ride-allocation broadcast fraud signal raised by MSU.",
+      "Needs attention: Odai (DIF - Amman) has 0 completed sessions and is still in 'scoring pending' status - follow up on blocker."
+    ]
+  },
+  {
+    "week_id": "2026-w39",
+    "cohort": "PAX_KSA",
+    "bullets": [
+      "Safety & trust focus group scheduled in Riyadh following a small uptick in trust-related support tickets.",
+      "Passenger NPS tracker shows KSA riders stable week over week, no material movement.",
+      "Needs attention: duplicate SurveyMonkey collector link was sent to two cities this week - corrected, but re-check response counts before reporting."
+    ]
+  },
+  {
+    "week_id": "2026-w39",
+    "cohort": "PAX_JOR",
+    "bullets": [
+      "Waiting-time perception survey in analysis after a spike in waiting-time fee disputes logged via WhatsApp.",
+      "Early read: riders underestimate actual waiting time by ~2 minutes on average, driving the dispute rate.",
+      "Needs attention: a rider dispute on an Amman trip's extra waiting-time charge is still under review - link to case when closed."
+    ]
+  },
+  {
+    "week_id": "2026-w38",
+    "cohort": "DX_KSA",
+    "bullets": [
+      "Driver NPS pulse closed for the week; commission transparency remained the top detractor driver.",
+      "MSU round in Jeddah surfaced a ride-allocation broadcast concern, since escalated to DIF for confirmation.",
+      "Needs attention: none carried over - both flags from this week were resolved before Friday reporting."
+    ]
+  },
+  {
+    "week_id": "2026-w38",
+    "cohort": "PAX_KSA",
+    "bullets": [
+      "Support ticket diary study closed; resolution-time friction was the dominant theme across all ten riders.",
+      "No material change in passenger NPS this week.",
+      "Needs attention: two diary participants dropped out mid-week - note for smaller sample when reporting results."
+    ]
+  }
+]
