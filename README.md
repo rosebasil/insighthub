@@ -30,7 +30,8 @@ Summary, About**.
 Home.py                         # entry point - sets up navigation (st.navigation)
 views/
   home.py                        # Home - week picker, stat tiles, cohort highlights,
-                                  #   surveys, WhatsApp/technical issues, MSU & DIF performance
+                                  #   surveys, WhatsApp/technical issues, social sentiment &
+                                  #   app reviews, fieldwork completed, MSU & DIF performance
   studies.py                     # Searchable/filterable studies catalogue
   dashboards.py                  # Dashboard catalogue + inline HTML viewer
   weekly.py                      # Weekly digest - major changes & recommended next steps
@@ -47,6 +48,9 @@ data/
   issues.json                    # WhatsApp & technical issues log, by week
   msu_dif_performance.json       # MSU (mystery shopper) & DIF (driver in-field) fieldwork, by week
   weekly_digest.json             # Major changes & recommended next steps, by week
+  sentiment_summary.json         # Weekly social/app-review headline metrics - EMPTY until you add data
+  sentiment_themes.json          # Weekly theme mention counts, for the 6-week trend - EMPTY until you add data
+  fieldwork.json                 # Fieldwork completed, by week - EMPTY until you add data
 dashboard_files/
   driver_voice_radar.html        # Sample embedded dashboard (demo)
 assets/
@@ -165,6 +169,82 @@ in pink on the Home page:
 - `data/msu_dif_performance.json` — `rows` (one per shopper/driver per week)
   plus `meta[week_id]` for the "X of 18 cities live on MSU survey" badge.
 
+### Log social sentiment & app reviews
+
+This section on Home is **empty until you add data** - `data/sentiment_summary.json`
+and `data/sentiment_themes.json` both start as `[]`. Nothing is invented: no
+rating, percentage, trend or theme is ever shown unless a real row backs it.
+
+It's split into **two files on purpose**, so a week's total item volume can
+never get silently confused with theme-mention volume (one review/post can
+carry more than one theme tag, so theme mentions can legitimately sum to more
+than the item count):
+
+**`data/sentiment_summary.json`** — one object per (week, cohort, source_type).
+`cohort` is one of `DX_KSA`, `DX_JOR`, `PAX_KSA`, `PAX_JOR`; `source_type` is
+`"social_media"` or `"app_reviews"`. Only `week_id`, `cohort`, `source_type`,
+`item_count`, `source` and `last_updated` are required - everything else is
+optional and only renders when present:
+
+```json
+{
+  "week_id": "2026-w39",
+  "cohort": "DX_KSA",
+  "source_type": "app_reviews",
+  "item_count": 128,              // required - total reviews/posts collected this week
+  "rating": 4.2,                  // optional - only shown for source_type "app_reviews"
+  "rating_count": 128,             // optional - how many ratings the average covers
+  "positive_count": 70,           // optional - all three must be present to show the mix bar
+  "neutral_count": 40,            // optional
+  "negative_count": 18,           // optional
+  "source": "Google Play + App Store reviews",  // required - shown as-is under the card
+  "last_updated": "2026-09-21"    // required - ISO date, shown as-is under the card
+}
+```
+
+**`data/sentiment_themes.json`** — one object per (week, cohort, source_type,
+theme), all four fields plus `mentions` required:
+
+```json
+{
+  "week_id": "2026-w39",
+  "cohort": "DX_KSA",
+  "source_type": "app_reviews",
+  "theme": "App stability",
+  "mentions": 34
+}
+```
+
+The Home page shows, per (cohort, source_type) combination you select:
+summary cards built from whatever fields are present, a line chart of the
+top 5 themes' mention counts for the 6 weeks ending at the selected week (or
+fewer weeks, if `data/weeks.json` doesn't have 6 yet), and those themes'
+change vs. the previous week. If neither file has a row for a given (week,
+cohort, source_type), the panel shows "No sentiment data available for this
+period" instead of guessing.
+
+### Log completed fieldwork
+
+`data/fieldwork.json` starts as `[]`. One object per completed piece of
+fieldwork; `study`, `objective`, `market` and `week_id` are the fields the
+table is built around, `completion_date` and `report_url` are optional
+(a missing `report_url` just shows "—" instead of a link):
+
+```json
+{
+  "id": "fw-2026-w39-01",
+  "week_id": "2026-w39",
+  "study": "Driver Voice Radar - Wave 3",
+  "objective": "Track sentiment on earnings & app stability",
+  "market": "KSA",
+  "completion_date": "2026-09-24",
+  "report_url": "https://your-dashboard-or-doc-link"   // optional
+}
+```
+
+`week_id` should be the week the fieldwork **completed** in - the row shows
+up on that week's Home page regardless of when the study started.
+
 ### Edit the Weekly Digest
 
 Edit `data/weekly_digest.json` (one entry per `week_id`, with
@@ -209,6 +289,17 @@ touching any page:
 - `load_studies_from_uploaded_csv()` — wire up an `st.file_uploader` (e.g. on
   a future internal "Admin" page) so studies can be added without editing
   JSON directly.
+- `load_sentiment_from_snowflake()` — replace `_load_sentiment_summary_raw()`
+  and `_load_sentiment_themes_raw()` with warehouse queries once your social
+  listening / app review exports land in Snowflake. Keep the same two-file
+  row shape (item counts separate from theme mentions) so `load_sentiment_summary()`,
+  `load_theme_trend()` and `top_themes_with_delta()` - and the Home page code
+  that calls them - don't need to change.
+- `load_fieldwork_from_google_sheets()` — replace `_load_fieldwork_raw()`
+  with a read from your team's shared fieldwork tracker sheet, mapped onto
+  the same row shape as `data/fieldwork.json`. A short-TTL cache
+  (`@st.cache_data(ttl=300)`) is recommended here since a Sheets API call is
+  more expensive than reading a local file.
 - `classify_text()` / `summarize_text()` — placeholders for future automated
   topic tagging and findings summarization (deliberately not implemented in
   v1, per project scope).

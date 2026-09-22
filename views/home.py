@@ -6,18 +6,25 @@ import streamlit as st
 
 from modules import styles
 from modules.data_loader import (
+    COHORT_LABELS,
     COHORTS,
+    SOURCE_TYPE_LABELS,
+    SOURCE_TYPES,
     current_week_id,
     get_week,
     issue_status_counts,
     load_dashboards,
+    load_fieldwork,
     load_highlights,
     load_issues,
     load_msu_dif_performance,
+    load_sentiment_summary,
     load_studies,
     load_surveys,
+    load_theme_trend,
     load_weeks,
     search_all,
+    top_themes_with_delta,
 )
 
 styles.page_title("Jeeny Insights Hub")
@@ -172,6 +179,122 @@ with right:
         cards = "".join(styles.issue_card_html(i) for i in week_issues)
         st.markdown(
             styles.compact_html(f'<div style="max-height:420px;overflow-y:auto;padding-right:4px;">{cards}</div>'),
+            unsafe_allow_html=True,
+        )
+
+st.divider()
+
+# --- Social sentiment & app reviews + Fieldwork completed ------------------
+sent_col, field_col = st.columns([1.3, 1], gap="large")
+
+with sent_col:
+    st.markdown("#### 💭 Social sentiment & app reviews")
+    source_tabs = st.tabs([SOURCE_TYPE_LABELS[s] for s in SOURCE_TYPES])
+    for tab, source_type in zip(source_tabs, SOURCE_TYPES):
+        with tab:
+            cohort_choice = st.selectbox(
+                "Segment",
+                options=COHORTS,
+                format_func=lambda c: COHORT_LABELS[c],
+                key=f"sentiment-cohort-{source_type}",
+                label_visibility="collapsed",
+            )
+            summary = load_sentiment_summary(selected_week_id, cohort_choice, source_type)
+            trend = load_theme_trend(selected_week_id, cohort_choice, source_type)
+            top_themes = top_themes_with_delta(trend, top_n=5)
+
+            if not summary and not top_themes:
+                st.caption("No sentiment data available for this period.")
+            else:
+                tile_specs = [("Items reviewed", summary.get("item_count") if summary else None)]
+                rating = summary.get("rating") if summary else None
+                if source_type == "app_reviews" and rating is not None:
+                    tile_specs.append(("Rating", f"{rating:.1f} ★"))
+                tile_cols = st.columns(len(tile_specs))
+                for col, (label, value) in zip(tile_cols, tile_specs):
+                    col.markdown(
+                        styles.stat_tile_html(label, value if value is not None else "—"),
+                        unsafe_allow_html=True,
+                    )
+
+                if summary and all(
+                    summary.get(k) is not None for k in ("positive_count", "neutral_count", "negative_count")
+                ):
+                    st.markdown(
+                        styles.sentiment_mix_html(
+                            summary["positive_count"], summary["neutral_count"], summary["negative_count"]
+                        ),
+                        unsafe_allow_html=True,
+                    )
+
+                if summary:
+                    st.caption(
+                        f"Source: {summary.get('source') or 'Unknown'} · "
+                        f"Updated {summary.get('last_updated') or '—'}"
+                    )
+
+                if top_themes:
+                    theme_names = [t["theme"] for t in top_themes]
+                    chart_data = {"Week": [w["label"] for w in trend]}
+                    for name in theme_names:
+                        chart_data[name] = [w["themes"].get(name, 0) for w in trend]
+                    st.line_chart(chart_data, x="Week", height=220)
+
+                    st.markdown(
+                        f"<div style='font-size:12.5px;font-weight:600;color:{styles.JEENY_NAVY};margin-bottom:4px;'>"
+                        f"Top themes this week</div>",
+                        unsafe_allow_html=True,
+                    )
+                    theme_rows_html = "".join(
+                        styles.compact_html(f"""
+                        <tr>
+                          <td>{t['theme']}</td>
+                          <td>{t['mentions']}</td>
+                          <td>{styles.delta_badge_html(t['delta'], t['is_new'])}</td>
+                        </tr>
+                        """)
+                        for t in top_themes
+                    )
+                    st.markdown(
+                        styles.compact_html(f"""
+                        <table class="jih-table">
+                          <thead><tr><th>Theme</th><th>Mentions</th><th>vs last week</th></tr></thead>
+                          <tbody>{theme_rows_html}</tbody>
+                        </table>
+                        """),
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    st.caption("No theme data recorded for this week.")
+
+with field_col:
+    st.markdown("#### 🔬 Fieldwork completed")
+    fieldwork = load_fieldwork(selected_week_id)
+    if not fieldwork:
+        st.caption("No fieldwork completed this week.")
+    else:
+        fieldwork_rows_html = ""
+        for item in fieldwork:
+            if item.get("report_url"):
+                report_cell = f'<a href="{item["report_url"]}" target="_blank" rel="noopener">Open &#8599;</a>'
+            else:
+                report_cell = f'<span style="color:{styles.COOL_GRAY};">—</span>'
+            fieldwork_rows_html += styles.compact_html(f"""
+            <tr>
+              <td><strong>{item.get('study') or 'Untitled study'}</strong></td>
+              <td style="color:{styles.TEXT_MUTED};font-size:12.5px;">{item.get('objective') or '—'}</td>
+              <td>{item.get('market') or '—'}</td>
+              <td style="font-size:12.5px;color:{styles.TEXT_MUTED};">{item.get('completion_date') or '—'}</td>
+              <td>{report_cell}</td>
+            </tr>
+            """)
+        st.markdown(
+            styles.compact_html(f"""
+            <table class="jih-table">
+              <thead><tr><th>Study</th><th>Objective</th><th>Market</th><th>Completed</th><th>Report</th></tr></thead>
+              <tbody>{fieldwork_rows_html}</tbody>
+            </table>
+            """),
             unsafe_allow_html=True,
         )
 

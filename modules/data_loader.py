@@ -15,6 +15,8 @@ Planned automation (v2+):
     - load_responses_from_surveymonkey()
     - load_dashboard_metadata_from_powerbi()
     - load_studies_from_uploaded_csv()
+    - load_sentiment_from_snowflake()
+    - load_fieldwork_from_google_sheets()
     - classify_text() / summarize_text()  (NLP automation placeholders)
 
 None of the placeholder functions below are wired up yet. They exist so
@@ -42,6 +44,9 @@ SURVEYS_PATH = DATA_DIR / "surveys.json"
 ISSUES_PATH = DATA_DIR / "issues.json"
 MSU_DIF_PATH = DATA_DIR / "msu_dif_performance.json"
 WEEKLY_DIGEST_PATH = DATA_DIR / "weekly_digest.json"
+SENTIMENT_SUMMARY_PATH = DATA_DIR / "sentiment_summary.json"
+SENTIMENT_THEMES_PATH = DATA_DIR / "sentiment_themes.json"
+FIELDWORK_PATH = DATA_DIR / "fieldwork.json"
 
 ISSUE_STATUSES = ["New", "Under review", "Reported out", "Closed"]
 COHORTS = ["DX_KSA", "DX_JOR", "PAX_KSA", "PAX_JOR"]
@@ -51,6 +56,9 @@ COHORT_LABELS = {
     "PAX_KSA": "PAX · KSA",
     "PAX_JOR": "PAX · Jordan",
 }
+SOURCE_TYPES = ["social_media", "app_reviews"]
+SOURCE_TYPE_LABELS = {"social_media": "Social Media", "app_reviews": "App Reviews"}
+THEME_TREND_WEEKS = 6
 
 
 # --------------------------------------------------------------------------
@@ -204,6 +212,119 @@ def load_weekly_digest(week_id: str) -> dict[str, Any]:
     )
 
 
+# --------------------------------------------------------------------------
+# Social sentiment & app reviews
+#
+# Two files, kept deliberately separate so item volume is never confused
+# with theme volume:
+#   - sentiment_summary.json: one row per (week, cohort, source_type) with
+#     the week's item_count (reviews/posts actually collected) plus
+#     whatever optional aggregate fields are available (rating, sentiment
+#     mix). This is the "how much did we look at, and what's the headline
+#     number" row.
+#   - sentiment_themes.json: one row per (week, cohort, source_type,
+#     theme) with that theme's mention count. A single review/post can be
+#     tagged with more than one theme, so SUM(mentions) for a week can
+#     legitimately exceed that week's item_count in sentiment_summary -
+#     never derive one from the other.
+# Both are empty lists until real data is added; see README.md for the
+# exact field-by-field format.
+# --------------------------------------------------------------------------
+
+
+@st.cache_data(show_spinner=False)
+def _load_sentiment_summary_raw() -> list[dict[str, Any]]:
+    with open(SENTIMENT_SUMMARY_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_sentiment_summary(week_id: str, cohort: str, source_type: str) -> dict[str, Any] | None:
+    """Return the one summary row for this (week, cohort, source_type),
+    or None if nothing has been recorded for it yet."""
+    for row in _load_sentiment_summary_raw():
+        if row.get("week_id") == week_id and row.get("cohort") == cohort and row.get("source_type") == source_type:
+            return row
+    return None
+
+
+@st.cache_data(show_spinner=False)
+def _load_sentiment_themes_raw() -> list[dict[str, Any]]:
+    with open(SENTIMENT_THEMES_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_theme_trend(
+    week_id: str, cohort: str, source_type: str, weeks_back: int = THEME_TREND_WEEKS
+) -> list[dict[str, Any]]:
+    """Return up to `weeks_back` weeks of theme-mention data ending at
+    week_id (oldest first), as [{"week_id", "label", "themes": {theme:
+    mentions}}, ...]. Returns fewer entries if fewer weeks exist in
+    weeks.json - never pads or invents data. Returns [] if week_id isn't
+    a known week.
+    """
+    weeks = load_weeks()
+    ids_in_order = [w["id"] for w in weeks]
+    if week_id not in ids_in_order:
+        return []
+    idx = ids_in_order.index(week_id)
+    start_idx = max(0, idx - weeks_back + 1)
+    window = weeks[start_idx : idx + 1]
+
+    raw = _load_sentiment_themes_raw()
+    trend = []
+    for w in window:
+        themes: dict[str, int] = {}
+        for row in raw:
+            if row.get("week_id") == w["id"] and row.get("cohort") == cohort and row.get("source_type") == source_type:
+                theme = row.get("theme")
+                mentions = row.get("mentions")
+                if theme is not None and isinstance(mentions, (int, float)):
+                    themes[theme] = themes.get(theme, 0) + mentions
+        trend.append({"week_id": w["id"], "label": w.get("label", w["id"]), "themes": themes})
+    return trend
+
+
+def top_themes_with_delta(trend: list[dict[str, Any]], top_n: int = 5) -> list[dict[str, Any]]:
+    """From load_theme_trend()'s output, return the top `top_n` themes for
+    the most recent week in the trend window, each as {"theme",
+    "mentions", "delta", "is_new"}. `delta` is the change vs. the
+    previous week in the window (None if that theme has no prior-week
+    count to compare against - e.g. only one week of history exists, or
+    the theme wasn't tracked last week). Never invents a delta.
+    """
+    if not trend:
+        return []
+    current = trend[-1]["themes"]
+    previous = trend[-2]["themes"] if len(trend) >= 2 else {}
+    items = []
+    for theme, mentions in current.items():
+        prev_mentions = previous.get(theme)
+        delta = (mentions - prev_mentions) if prev_mentions is not None else None
+        items.append({"theme": theme, "mentions": mentions, "delta": delta, "is_new": prev_mentions is None})
+    items.sort(key=lambda x: x["mentions"], reverse=True)
+    return items[:top_n]
+
+
+# --------------------------------------------------------------------------
+# Fieldwork completed
+# --------------------------------------------------------------------------
+
+
+@st.cache_data(show_spinner=False)
+def _load_fieldwork_raw() -> list[dict[str, Any]]:
+    with open(FIELDWORK_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_fieldwork(week_id: str) -> list[dict[str, Any]]:
+    """Return fieldwork completed in the given week (data/fieldwork.json),
+    most recently completed first. Rows missing "completion_date" sort
+    last rather than crashing.
+    """
+    items = [f for f in _load_fieldwork_raw() if f.get("week_id") == week_id]
+    return sorted(items, key=lambda f: f.get("completion_date") or "", reverse=True)
+
+
 def dashboard_file_exists(dashboard: dict[str, Any]) -> bool:
     file_field = dashboard.get("file")
     if not file_field:
@@ -296,6 +417,47 @@ def load_studies_from_uploaded_csv(uploaded_file: Any) -> list[dict[str, Any]]:
     page) instead of editing studies.json by hand.
     """
     raise NotImplementedError("CSV upload ingestion is not yet implemented for Jeeny Insights Hub.")
+
+
+def load_sentiment_from_snowflake(week_id: str, connection_config: dict[str, Any] | None = None) -> tuple[list, list]:
+    """Placeholder for a future Snowflake-backed sentiment feed (social
+    listening + app store review exports, e.g. via Talkwalker/Brandwatch/
+    App Store Connect/Play Console pipelines landed in Snowflake).
+
+    Intended shape once implemented:
+        1. Open a connection using `snowflake-connector-python` with
+           credentials from st.secrets (never hard-coded).
+        2. Query two views for the given week - one that mirrors the
+           per-(week, cohort, source_type) row shape used by
+           load_sentiment_summary(), one that mirrors the per-(week,
+           cohort, source_type, theme) row shape used by
+           load_theme_trend() - and return (summary_rows, theme_rows).
+        3. Replace the bodies of _load_sentiment_summary_raw() and
+           _load_sentiment_themes_raw() with these queries (cached per
+           week_id instead of read-once-and-filter, since a warehouse
+           query is more expensive than reading a small JSON file).
+    """
+    raise NotImplementedError("Snowflake sentiment integration is not yet configured for Jeeny Insights Hub.")
+
+
+def load_fieldwork_from_google_sheets(sheet_id: str | None = None) -> list[dict[str, Any]]:
+    """Placeholder for reading the team's shared fieldwork tracker
+    straight from Google Sheets instead of data/fieldwork.json, so
+    whoever runs a study logs completion once in the sheet everyone
+    already uses.
+
+    Intended shape once implemented:
+        1. Use `gspread` (or the Sheets API directly) with a service
+           account credential from st.secrets.
+        2. Read the tracker sheet and map its columns onto the row shape
+           documented in README.md for data/fieldwork.json (study,
+           objective, market, week_id, completion_date, report_url).
+        3. Replace the body of _load_fieldwork_raw() with this read,
+           cached with a short TTL (e.g. @st.cache_data(ttl=300)) so
+           the team sees updates within a few minutes without hammering
+           the Sheets API on every page load.
+    """
+    raise NotImplementedError("Google Sheets fieldwork integration is not yet configured for Jeeny Insights Hub.")
 
 
 def classify_text(texts: list[str]) -> list[str]:

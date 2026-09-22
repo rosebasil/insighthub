@@ -415,3 +415,41 @@ def stat_tile_html(label: str, value: Any, accent_hex: str = JEENY_PURPLE) -> st
       <div class="jih-stat-tile__value" style="color:{accent_hex};">{value}</div>
     </div>
     """)
+
+
+def delta_badge_html(delta: int | float | None, is_new: bool = False) -> str:
+    """Small up/down/new indicator for a week-over-week change, reusing
+    the same green/gray/red semantics as the MSU/DIF status pills
+    (GOOD/SCORING PENDING/BELOW MIN) rather than inventing new colors."""
+    if is_new or delta is None:
+        return f'<span style="color:{COOL_GRAY};font-size:12px;">new</span>'
+    if delta > 0:
+        return f'<span style="color:#4C9A5B;font-weight:600;font-size:12px;">&#9650; +{delta}</span>'
+    if delta < 0:
+        return f'<span style="color:#C0392B;font-weight:600;font-size:12px;">&#9660; {delta}</span>'
+    return f'<span style="color:{COOL_GRAY};font-size:12px;">&#9679; 0</span>'
+
+
+def sentiment_mix_html(positive: int, neutral: int, negative: int) -> str:
+    """Three-segment horizontal bar for an optional positive/neutral/
+    negative breakdown. Callers must only invoke this when all three
+    counts are present - it does not guess a missing one."""
+    total = positive + neutral + negative
+    if not total:
+        return ""
+    segs = "".join(
+        f'<div style="flex:{count};background:{color};height:100%;"></div>'
+        for count, color in [(positive, "#4C9A5B"), (neutral, COOL_GRAY), (negative, "#C0392B")]
+        if count
+    )
+    pct = lambda n: round((n / total) * 100)
+    return compact_html(f"""
+    <div>
+      <div class="jih-status-bar" style="margin-bottom:4px;">{segs}</div>
+      <div style="font-size:11px;color:{TEXT_MUTED};">
+        <span style="color:#4C9A5B;">{pct(positive)}% positive</span> &nbsp;
+        <span style="color:{COOL_GRAY};">{pct(neutral)}% neutral</span> &nbsp;
+        <span style="color:#C0392B;">{pct(negative)}% negative</span>
+      </div>
+    </div>
+    """)
