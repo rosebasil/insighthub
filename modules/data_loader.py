@@ -53,6 +53,7 @@ MSU_DIF_PATH = DATA_DIR / "msu_dif_performance.json"
 WEEKLY_DIGEST_PATH = DATA_DIR / "weekly_digest.json"
 SENTIMENT_SUMMARY_PATH = DATA_DIR / "sentiment_summary.json"
 SENTIMENT_THEMES_PATH = DATA_DIR / "sentiment_themes.json"
+IN_APP_COMPLAINTS_PATH = DATA_DIR / "in_app_complaints.json"
 FIELDWORK_PATH = DATA_DIR / "fieldwork.json"
 
 ISSUE_STATUSES = ["New", "Under review", "Reported out", "Closed"]
@@ -573,6 +574,91 @@ def load_review_feedback(week_id: str, cohort: str, weeks_back: int = THEME_TREN
                     themes[theme] = themes.get(theme, 0) + mentions
         trend.append({"week_id": w["id"], "label": w.get("label", w["id"]), "themes": themes})
     return {"mode": "offline", "error": None, "summary": summary, "trend": trend}
+
+
+_COHORT_BY_AUDIENCE_MARKET = {(COHORT_AUDIENCE[c], COHORT_MARKET[c]): c for c in COHORTS}
+
+
+@st.cache_data(show_spinner=False)
+def _load_in_app_complaints_raw() -> list[dict[str, Any]]:
+    if not IN_APP_COMPLAINTS_PATH.exists():
+        return []
+    with open(IN_APP_COMPLAINTS_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+@st.cache_data(ttl=900, show_spinner="Querying Snowflake...")
+def _fetch_complaints_cached(range_start_iso: str, range_end_iso: str, per_cohort_limit: int):
+    """Cached for 15 minutes per (range, limit). Returns (rows, error)."""
+    from datetime import date as _date
+
+    from . import snowflake_client
+
+    range_start = _date.fromisoformat(range_start_iso)
+    range_end = _date.fromisoformat(range_end_iso)
+    return snowflake_client.fetch_recent_complaints(range_start, range_end, per_cohort_limit=per_cohort_limit)
+
+
+def load_in_app_complaints(week_id: str, cohort: str, per_cohort_limit: int = 15) -> dict[str, Any]:
+    """Real driver/passenger complaint text + user IDs for one cohort in
+    one week - the row-level counterpart to load_review_feedback()'s
+    aggregate summary/trend. Tries live Snowflake first (if
+    st.secrets['snowflake'] is configured), falls back to
+    data/in_app_complaints.json otherwise. Returns:
+      {"mode": "live" | "offline" | "unavailable", "error": str | None,
+       "complaints": [{"user_id","city","rating","comment_ar",
+       "comment_en","timestamp"}, ...]}
+    Complaint-shaped only (see modules/snowflake_client.py's
+    _COMPLAINTS_RANGE_SQL comment for the exact filter) - not every
+    comment, and phone numbers are already redacted by the time this
+    returns, live or offline.
+    """
+    from . import snowflake_client
+
+    bounds = week_bounds(week_id)
+    if bounds is None:
+        return {"mode": "offline", "error": None, "complaints": []}
+    start, end = bounds
+
+    if snowflake_client.is_configured():
+        rows, error = _fetch_complaints_cached(start.isoformat(), end.isoformat(), per_cohort_limit)
+        if error is not None:
+            return {"mode": "unavailable", "error": error, "complaints": []}
+        complaints = []
+        for r in rows:
+            row_cohort = _COHORT_BY_AUDIENCE_MARKET.get((r.get("AUDIENCE_RAW", "").capitalize(), r.get("MARKET")))
+            if row_cohort != cohort:
+                continue
+            ts = r.get("TIMESTAMP")
+            complaints.append(
+                {
+                    "user_id": r.get("USER_ID"),
+                    "city": r.get("CITY"),
+                    "rating": r.get("RATING_STARS"),
+                    "comment_ar": r.get("RATINGS_COMMENTS"),
+                    "comment_en": r.get("EN_TRANSLATION") or None,
+                    "timestamp": ts.isoformat() if hasattr(ts, "isoformat") else ts,
+                }
+            )
+        complaints.sort(key=lambda c: c["timestamp"] or "", reverse=True)
+        return {"mode": "live", "error": None, "complaints": complaints}
+
+    # Offline fallback - data/in_app_complaints.json, a real snapshot.
+    all_rows = _load_in_app_complaints_raw()
+    complaints = [
+        {
+            "user_id": row.get("user_id"),
+            "city": row.get("city"),
+            "rating": row.get("rating"),
+            "comment_ar": row.get("comment_ar"),
+            "comment_en": row.get("comment_en"),
+            "timestamp": row.get("timestamp"),
+        }
+        for row in all_rows
+        if row.get("week_id") == week_id and row.get("cohort") == cohort
+    ]
+    complaints.sort(key=lambda c: c["timestamp"] or "", reverse=True)
+    return {"mode": "offline", "error": None, "complaints": complaints}
 
 
 def top_themes_with_delta(trend: list[dict[str, Any]], top_n: int = 5) -> list[dict[str, Any]]:

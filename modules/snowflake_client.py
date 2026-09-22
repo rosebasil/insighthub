@@ -34,6 +34,7 @@ instead of crashing the page.
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime, time, timedelta
 from typing import Any
 
@@ -91,7 +92,62 @@ _THEMES_RANGE_SQL = f"""
     GROUP BY 1, 2, 3, 4
 """
 
+# Row-level complaint text (RATINGS_COMMENTS / EN_TRANSLATION) - the one
+# place this connector deliberately breaks from "aggregate-only". Scoped
+# to complaint-shaped rows only: a non-trivial comment (8+ chars, not
+# purely numeric) and a rating of 3 stars or below (or no rating at all,
+# which covers driver comments - drivers don't carry a star rating in
+# this table the way passengers do). USER_ID is an opaque internal id,
+# never USER_MOBILE_NUMBER/USER_NAME (neither column exists on this
+# table). Free-text comments can still contain a phone number a user
+# volunteered inside their own feedback, so _redact_phone_numbers()
+# scrubs digit runs of 8+ before this ever reaches a JSON file or the UI.
+_COMPLAINTS_RANGE_SQL = f"""
+    SELECT
+        USER_TYPE AS AUDIENCE_RAW,
+        USER_ID,
+        {_MARKET_CASE} AS MARKET,
+        CITY,
+        RATING_STARS,
+        RATINGS_COMMENTS,
+        EN_TRANSLATION,
+        TIMESTAMP
+    FROM {FEEDBACK_TABLE}
+    WHERE TIMESTAMP >= %(range_start)s AND TIMESTAMP < %(range_end_exclusive)s
+      AND USER_TYPE IN ('driver', 'passenger')
+      AND COUNTRY IN ('Saudi Arabia', 'Jordan')
+      AND RATINGS_COMMENTS IS NOT NULL
+      AND LENGTH(TRIM(RATINGS_COMMENTS)) >= 8
+      AND NOT REGEXP_LIKE(RATINGS_COMMENTS, '^[0-9.,\\s]+$')
+      AND (RATING_STARS IS NULL OR RATING_STARS <= 3)
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY USER_TYPE, {_MARKET_CASE}
+        ORDER BY TIMESTAMP DESC
+    ) <= %(per_cohort_limit)s
+    ORDER BY AUDIENCE_RAW, MARKET, TIMESTAMP DESC
+"""
+
 _CONNECTIVITY_SQL = "SELECT 1 AS OK"
+
+# Matches digit runs of 8+ (spaces/dashes allowed inside the run) - long
+# enough to catch a Jeeny mobile number (05xxxxxxxx / 07xxxxxxxx, 10
+# digits) or an international +9665xxxxxxxx form, short enough to leave
+# ordinary amounts, ratings and short counts alone. A driver or passenger
+# occasionally volunteers their own number inside free-text feedback
+# (e.g. "call me on 0501234567") - this scrubs it before the text is
+# ever written to disk or shown in the app.
+_PHONE_RUN = re.compile(r"(?:\+?\d[\d\s\-]{6,}\d)")
+
+
+def _redact_phone_numbers(text: str | None) -> str | None:
+    """Replace any 8+ digit run in `text` with a redaction placeholder.
+    None/empty input passes through unchanged. Not a general PII scrubber
+    - it only targets phone-number-shaped digit runs, on purpose (a regex
+    that tried to also strip names would have too many false positives to
+    trust on free text)."""
+    if not text:
+        return text
+    return _PHONE_RUN.sub("[phone number redacted]", text)
 
 
 def is_configured() -> bool:
@@ -263,3 +319,34 @@ def fetch_no_rides_after_signup(
         {"period_start": start_dt, "period_end_exclusive": end_exclusive_dt, "window_days": window_days},
         credentials=credentials,
     )
+
+
+def fetch_recent_complaints(
+    range_start: date,
+    range_end_inclusive: date,
+    per_cohort_limit: int = 15,
+    credentials: dict[str, Any] | None = None,
+) -> tuple[list[dict[str, Any]] | None, str | None]:
+    """Return (rows, error) for the most recent complaint-shaped driver
+    and passenger comments in [range_start, range_end_inclusive], capped
+    at `per_cohort_limit` per (USER_TYPE, MARKET) - i.e. per DX_KSA/
+    DX_JOR/PAX_KSA/PAX_JOR-equivalent cohort. Each row: {AUDIENCE_RAW
+    ("driver"/"passenger"), USER_ID, MARKET, CITY, RATING_STARS,
+    RATINGS_COMMENTS, EN_TRANSLATION, TIMESTAMP} - with
+    RATINGS_COMMENTS/EN_TRANSLATION already passed through
+    _redact_phone_numbers(). See the comment above _COMPLAINTS_RANGE_SQL
+    for the complaint-shaped filter and why this breaks from
+    aggregate-only.
+    """
+    start_dt, end_exclusive_dt = _range_bounds(range_start, range_end_inclusive)
+    rows, error = _run(
+        _COMPLAINTS_RANGE_SQL,
+        {"range_start": start_dt, "range_end_exclusive": end_exclusive_dt, "per_cohort_limit": per_cohort_limit},
+        credentials=credentials,
+    )
+    if rows is None:
+        return None, error
+    for row in rows:
+        row["RATINGS_COMMENTS"] = _redact_phone_numbers(row.get("RATINGS_COMMENTS"))
+        row["EN_TRANSLATION"] = _redact_phone_numbers(row.get("EN_TRANSLATION"))
+    return rows, error

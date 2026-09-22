@@ -296,6 +296,55 @@ else:
             else:
                 st.caption("No theme data recorded for this week.")
 
+            st.markdown(
+                f"<div style='font-size:12.5px;font-weight:600;color:{styles.JEENY_NAVY};margin:14px 0 4px;'>"
+                f"Recent complaints</div>",
+                unsafe_allow_html=True,
+            )
+            complaints_result = dl.load_in_app_complaints(selected_week_id, review_cohort)
+            complaints_mode = complaints_result["mode"]
+            if complaints_mode == "unavailable":
+                st.error(f"{dl.SNOWFLAKE_UNAVAILABLE_MESSAGE}: {complaints_result['error']}")
+            elif not complaints_result["complaints"]:
+                st.caption("No complaint-shaped comments recorded for this cohort this week.")
+            else:
+                complaints_badge = "Live from Snowflake" if complaints_mode == "live" else "Scheduled refresh"
+                st.caption(
+                    f"{complaints_badge} · real driver/passenger comments, most recent first - "
+                    "internal use only, do not share outside Jeeny"
+                )
+                for c in complaints_result["complaints"]:
+                    ts = (c.get("timestamp") or "")[:16].replace("T", " ")
+                    rating_txt = f"{c['rating']}★" if c.get("rating") is not None else "—"
+                    with st.container(border=True):
+                        head_l, head_r = st.columns([3, 1])
+                        with head_l:
+                            st.markdown(
+                                f"<span style='font-family:monospace;font-size:12px;color:{styles.TEXT_MUTED};'>"
+                                f"{styles.esc(c.get('user_id') or '—')}</span> &middot; "
+                                f"{styles.esc(c.get('city') or '—')}",
+                                unsafe_allow_html=True,
+                            )
+                        with head_r:
+                            st.markdown(
+                                f"<span style='float:right;font-size:12px;color:{styles.TEXT_MUTED};'>{rating_txt} · {styles.esc(ts)}</span>",
+                                unsafe_allow_html=True,
+                            )
+                        if c.get("comment_ar"):
+                            st.markdown(
+                                f"<div dir='rtl' style='font-size:13px;color:{styles.TEXT_DARK};margin:4px 0 2px;'>{styles.esc(c['comment_ar'])}</div>",
+                                unsafe_allow_html=True,
+                            )
+                        if c.get("comment_en"):
+                            st.markdown(
+                                f"<div style='font-size:12.5px;color:{styles.COOL_GRAY};'>{styles.esc(c['comment_en'])}</div>",
+                                unsafe_allow_html=True,
+                            )
+                st.caption(
+                    "Phone numbers are automatically redacted from comment text before display. "
+                    "Driver/passenger IDs are internal Jeeny identifiers, not names or phone numbers."
+                )
+
 st.divider()
 
 # --- Survey tracker ---------------------------------------------------
