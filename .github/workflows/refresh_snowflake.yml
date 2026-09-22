@@ -1,0 +1,51 @@
+name: Refresh Snowflake feedback data
+
+# Scheduled export to durable storage the app can read: pulls the latest
+# in-app reviews & feedback aggregates from Snowflake and commits the
+# refreshed data/sentiment_summary.json + data/sentiment_themes.json back
+# to the repo. No one edits these files by hand.
+#
+# Requires these repository secrets (Settings -> Secrets and variables ->
+# Actions) - see README.md "Connecting real data sources" for exactly
+# what to ask your Snowflake administrator for:
+#   SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PASSWORD
+# Optional (sensible defaults are used if omitted):
+#   SNOWFLAKE_ROLE, SNOWFLAKE_WAREHOUSE
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"  # every 6 hours
+  workflow_dispatch: {}     # allow a manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run refresh script
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: python scripts/refresh_snowflake_data.py
+
+      - name: Commit refreshed data if changed
+        run: |
+          git config user.name "jeeny-insights-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/sentiment_summary.json data/sentiment_themes.json data/refresh_meta.json
+          git diff --cached --quiet || git commit -m "Automated: refresh Snowflake feedback data [skip ci]"
+          git push

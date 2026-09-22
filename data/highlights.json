@@ -1,92 +1,102 @@
 [
   {
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "cohort": "DX_KSA",
     "bullets": [
       "Driver NPS pulse in-field this week; commission-breakdown visibility is still the top detractor theme from WhatsApp groups.",
-      "App store review analysis confirms the same theme: drivers want to see the commission split before accepting a ride.",
+      "In-app feedback confirms the same theme: drivers want to see the commission split before accepting a ride.",
       "Needs attention: possible auto-clicker / fraud signal on the Jeddah ride-allocation broadcast, flagged by MSU shopper Tasneem - under review."
-    ]
+    ],
+    "dashboard_id": "driver-voice-radar"
   },
   {
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "cohort": "DX_JOR",
     "bullets": [
       "MSU mystery shopper round live in Amman & Riyadh; scores tracking above the 4.0 quality bar so far.",
       "DIF shadowing in Amman is actively investigating the ride-allocation broadcast fraud signal raised by MSU.",
       "Needs attention: Odai (DIF - Amman) has 0 completed sessions and is still in 'scoring pending' status - follow up on blocker."
-    ]
+    ],
+    "dashboard_id": "driver-voice-radar"
   },
   {
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "cohort": "PAX_KSA",
     "bullets": [
       "Safety & trust focus group scheduled in Riyadh following a small uptick in trust-related support tickets.",
       "Passenger NPS tracker shows KSA riders stable week over week, no material movement.",
       "Needs attention: duplicate SurveyMonkey collector link was sent to two cities this week - corrected, but re-check response counts before reporting."
-    ]
+    ],
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "cohort": "PAX_JOR",
     "bullets": [
       "Waiting-time perception survey in analysis after a spike in waiting-time fee disputes logged via WhatsApp.",
       "Early read: riders underestimate actual waiting time by ~2 minutes on average, driving the dispute rate.",
       "Needs attention: a rider dispute on an Amman trip's extra waiting-time charge is still under review - link to case when closed."
-    ]
+    ],
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "cohort": "DX_KSA",
     "bullets": [
       "Driver NPS pulse closed for the week; commission transparency remained the top detractor driver.",
       "MSU round in Jeddah surfaced a ride-allocation broadcast concern, since escalated to DIF for confirmation.",
       "Needs attention: none carried over - both flags from this week were resolved before Friday reporting."
-    ]
+    ],
+    "dashboard_id": "driver-voice-radar"
   },
   {
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "cohort": "DX_JOR",
     "bullets": [
       "DIF shadowing paused pending scheduling; MSU coverage in Amman held steady at 22 completed sessions.",
       "No new fraud signals raised this week.",
       "Needs attention: none this week."
-    ]
+    ],
+    "dashboard_id": "driver-voice-radar"
   },
   {
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "cohort": "PAX_KSA",
     "bullets": [
       "Support ticket diary study closed; resolution-time friction was the dominant theme across all ten riders.",
       "No material change in passenger NPS this week.",
       "Needs attention: two diary participants dropped out mid-week - note for smaller sample when reporting results."
-    ]
+    ],
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "cohort": "PAX_JOR",
     "bullets": [
       "In-depth interviews on fare/waiting-time disputes wrapped in Amman; synthesis feeding into the W39 waiting-time survey.",
       "Referral program perception held steady versus W37.",
       "Needs attention: none this week."
-    ]
+    ],
+    "dashboard_id": "passenger-activation-tracking"
   },
   {
-    "week_id": "2026-w37",
+    "week_id": "2026-09-06",
     "cohort": "DX_KSA",
     "bullets": [
       "Driver onboarding friction interviews wrapped; drop-off concentrated in document verification step.",
       "Baseline earnings sentiment survey went out ahead of the September fee update.",
       "Needs attention: none this week."
-    ]
+    ],
+    "dashboard_id": "driver-voice-radar"
   },
   {
-    "week_id": "2026-w37",
+    "week_id": "2026-09-06",
     "cohort": "PAX_KSA",
     "bullets": [
       "Monthly rider NPS pulse completed across Riyadh, Jeddah and Dammam.",
       "No major shifts versus the prior month's read.",
       "Needs attention: none this week."
-    ]
+    ],
+    "dashboard_id": "passenger-activation-tracking"
   }
 ]

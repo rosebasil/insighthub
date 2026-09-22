@@ -1,13 +1,13 @@
 {
   "meta": {
-    "2026-w37": { "cities_live": 1, "cities_total": 18 },
-    "2026-w38": { "cities_live": 2, "cities_total": 18 },
-    "2026-w39": { "cities_live": 3, "cities_total": 18 }
+    "2026-09-06": { "cities_live": 1, "cities_total": 18 },
+    "2026-09-13": { "cities_live": 2, "cities_total": 18 },
+    "2026-09-20": { "cities_live": 3, "cities_total": 18 }
   },
   "rows": [
     {
       "id": "perf-039-01",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Tasneem",
       "role": "MSU",
       "city": "Amman",
@@ -21,7 +21,7 @@
     },
     {
       "id": "perf-039-02",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Aya",
       "role": "MSU",
       "city": "Amman",
@@ -35,7 +35,7 @@
     },
     {
       "id": "perf-039-03",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Mahmoud",
       "role": "MSU",
       "city": "Amman",
@@ -49,7 +49,7 @@
     },
     {
       "id": "perf-039-04",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Fahad",
       "role": "MSU",
       "city": "Riyadh",
@@ -63,7 +63,7 @@
     },
     {
       "id": "perf-039-05",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Odai",
       "role": "DIF",
       "city": "Amman",
@@ -77,7 +77,7 @@
     },
     {
       "id": "perf-039-06",
-      "week_id": "2026-w39",
+      "week_id": "2026-09-20",
       "name": "Salman",
       "role": "DIF",
       "city": "Riyadh",
@@ -91,7 +91,7 @@
     },
     {
       "id": "perf-038-01",
-      "week_id": "2026-w38",
+      "week_id": "2026-09-13",
       "name": "Tasneem",
       "role": "MSU",
       "city": "Amman",
@@ -105,7 +105,7 @@
     },
     {
       "id": "perf-038-02",
-      "week_id": "2026-w38",
+      "week_id": "2026-09-13",
       "name": "Fahad",
       "role": "MSU",
       "city": "Riyadh",

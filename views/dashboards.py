@@ -27,7 +27,7 @@ for i, d in enumerate(dashboards):
 
             exists = dashboard_file_exists(d)
             badges = styles.audience_badge_html(d["audience"])
-            badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{d["market"]}</span>'
+            badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{styles.esc(d["market"])}</span>'
             st.markdown(badges, unsafe_allow_html=True)
 
             st.caption(d["description"])

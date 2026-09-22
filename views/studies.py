@@ -87,10 +87,10 @@ for s in filtered:
             st.markdown(title_line)
 
         badges = styles.audience_badge_html(s["audience"])
-        badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{" / ".join(s["country"])}</span>'
-        badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{s["research_type"]}</span>'
+        badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{styles.esc(" / ".join(s["country"]))}</span>'
+        badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{styles.esc(s["research_type"])}</span>'
         for t in s.get("topic", []):
-            badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{t}</span>'
+            badges += f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.TEXT_MUTED};border:1px solid {styles.BORDER_COLOR};">{styles.esc(t)}</span>'
         st.markdown(badges, unsafe_allow_html=True)
 
         st.caption(s["description"])

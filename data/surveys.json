@@ -2,49 +2,106 @@
   {
     "id": "sv-039-01",
     "name": "Driver NPS",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
+    "reporting_period": "Week of Sep 20",
+    "audience": "Driver",
+    "market": null,
     "sent": 90000,
     "responses": 45000,
-    "dashboard_id": "driver-voice-radar"
+    "dashboard_id": "driver-voice-radar",
+    "source": "manual",
+    "status": "published"
   },
   {
     "id": "sv-039-02",
     "name": "Passenger NPS",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
+    "reporting_period": "Week of Sep 20",
+    "audience": "Passenger",
+    "market": null,
     "sent": 150000,
     "responses": 58500,
-    "dashboard_id": "passenger-activation-tracking"
+    "dashboard_id": "passenger-activation-tracking",
+    "source": "manual",
+    "status": "published"
   },
   {
     "id": "sv-039-03",
     "name": "Waiting-Time Perception (JOR)",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
+    "reporting_period": "Week of Sep 20",
+    "audience": "Passenger",
+    "market": "Jordan",
     "sent": 12000,
     "responses": 3120,
-    "dashboard_id": "passenger-activation-tracking"
+    "dashboard_id": "passenger-activation-tracking",
+    "source": "manual",
+    "status": "published"
+  },
+  {
+    "id": "sv-039-04",
+    "name": "Driver In-App Feedback Pulse (KSA)",
+    "week_id": "2026-09-20",
+    "reporting_period": "Week of Sep 20",
+    "audience": "Driver",
+    "market": "KSA",
+    "sent": null,
+    "responses": 214,
+    "dashboard_id": "driver-in-app-reviews",
+    "source": "manual",
+    "status": "published"
+  },
+  {
+    "id": "sv-sm-99001",
+    "name": "SurveyMonkey: Untitled draft (auto-discovered)",
+    "week_id": null,
+    "reporting_period": null,
+    "audience": null,
+    "market": null,
+    "sent": null,
+    "responses": null,
+    "dashboard_id": null,
+    "source": "surveymonkey",
+    "surveymonkey_id": "99001",
+    "status": "draft"
   },
   {
     "id": "sv-038-01",
     "name": "Driver NPS",
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
+    "reporting_period": "Week of Sep 13",
+    "audience": "Driver",
+    "market": null,
     "sent": 88500,
     "responses": 47500,
-    "dashboard_id": "driver-voice-radar"
+    "dashboard_id": "driver-voice-radar",
+    "source": "manual",
+    "status": "published"
   },
   {
     "id": "sv-038-02",
     "name": "Passenger NPS",
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
+    "reporting_period": "Week of Sep 13",
+    "audience": "Passenger",
+    "market": null,
     "sent": 148000,
     "responses": 61000,
-    "dashboard_id": "passenger-activation-tracking"
+    "dashboard_id": "passenger-activation-tracking",
+    "source": "manual",
+    "status": "published"
   },
   {
     "id": "sv-037-01",
     "name": "Driver Earnings Sentiment",
-    "week_id": "2026-w37",
+    "week_id": "2026-09-06",
+    "reporting_period": "Week of Sep 6",
+    "audience": "Driver",
+    "market": null,
     "sent": 40000,
     "responses": 15600,
-    "dashboard_id": "driver-in-app-reviews"
+    "dashboard_id": "driver-in-app-reviews",
+    "source": "manual",
+    "status": "published"
   }
 ]

@@ -1,1 +1,1280 @@
-[]
+[
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1068
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 319
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 317
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 191
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 114
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 55
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 27
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 23
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Vehicle Eligibility",
+    "mentions": 23
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 23
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 21
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 19
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "General Satisfaction",
+    "mentions": 11
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 6
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 5
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1531
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 450
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 415
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 254
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 197
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 195
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 140
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 77
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 74
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 72
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 37
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "General Dissatisfaction",
+    "mentions": 19
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 15
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 14
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 11
+  },
+  {
+    "week_id": "2026-08-16",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1198
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 257
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 147
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 108
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 102
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 53
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 38
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 32
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 25
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 22
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Vehicle Eligibility",
+    "mentions": 18
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 14
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 13
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 12
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_JOR",
+    "theme": "General Satisfaction",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1941
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 408
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 369
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 207
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 136
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 127
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 124
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 82
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 81
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 41
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "General Dissatisfaction",
+    "mentions": 19
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 19
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 18
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 17
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 13
+  },
+  {
+    "week_id": "2026-08-23",
+    "cohort": "DX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 2108
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 421
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 372
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 232
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 164
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 83
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 71
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 68
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 55
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 55
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Vehicle Eligibility",
+    "mentions": 43
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 31
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 18
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 17
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "General Satisfaction",
+    "mentions": 5
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 2950
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 783
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 527
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 507
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 354
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 277
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 228
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 129
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 124
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 76
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "General Dissatisfaction",
+    "mentions": 52
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 42
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 38
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 28
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 27
+  },
+  {
+    "week_id": "2026-08-30",
+    "cohort": "DX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 5
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 777
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 177
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 156
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 127
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 110
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 32
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 29
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 22
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 18
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 18
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Vehicle Eligibility",
+    "mentions": 12
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 10
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 9
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 6
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1018
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 315
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 271
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 158
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 131
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 129
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 86
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 54
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 48
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 29
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 16
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 15
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 15
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "General Dissatisfaction",
+    "mentions": 13
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 11
+  },
+  {
+    "week_id": "2026-09-06",
+    "cohort": "DX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 1378
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 345
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 250
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 244
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 202
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 70
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 64
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 50
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 43
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Vehicle Eligibility",
+    "mentions": 43
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 37
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 27
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 16
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 10
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "General Satisfaction",
+    "mentions": 8
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 2162
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 815
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 787
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 388
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 357
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 301
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 262
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 177
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 111
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 87
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 60
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 45
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 37
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 34
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 32
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "DX_KSA",
+    "theme": "General Dissatisfaction",
+    "mentions": 24
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Pricing, Payment & Fare Integrity",
+    "mentions": 7
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Driver Conduct & Professionalism",
+    "mentions": 5
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Safety & Security Concern",
+    "mentions": 5
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Trip & Route Integrity",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Driving Safety & Behavior",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "Vehicle Condition & Accuracy",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_JOR",
+    "theme": "General Satisfaction",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Pricing, Payment & Fare Integrity",
+    "mentions": 60
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Safety & Security Concern",
+    "mentions": 28
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Driving Safety & Behavior",
+    "mentions": 22
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Driver Conduct & Professionalism",
+    "mentions": 14
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Driver Identity & Matching",
+    "mentions": 10
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Trip & Route Integrity",
+    "mentions": 8
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "General Satisfaction",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Vehicle Condition & Accuracy",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-13",
+    "cohort": "PAX_KSA",
+    "theme": "App Issues",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Payment & Fare Issues",
+    "mentions": 189
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 36
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Cancellation Fine",
+    "mentions": 29
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "App Issues",
+    "mentions": 26
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 11
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 11
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Customer Support",
+    "mentions": 8
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Account Status or Suspension",
+    "mentions": 7
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Platform Policy",
+    "mentions": 6
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Unclear Feedback",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Service Area & Expansion",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "Feature Request",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "App Usability",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_JOR",
+    "theme": "General Dissatisfaction",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Payment & Fare Issues",
+    "mentions": 262
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Passenger Behaviour & Safety",
+    "mentions": 95
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 87
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Account Status or Suspension",
+    "mentions": 49
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Driver Incentives / Earnings",
+    "mentions": 38
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "App Issues",
+    "mentions": 33
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Ride Demand & Allocation",
+    "mentions": 16
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Customer Support",
+    "mentions": 16
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Service Area & Expansion",
+    "mentions": 14
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Vehicle Eligibility",
+    "mentions": 7
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "App Usability",
+    "mentions": 6
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Platform Policy",
+    "mentions": 4
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Feature Request",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "DX_KSA",
+    "theme": "Unclear Feedback",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_JOR",
+    "theme": "Driver Conduct & Professionalism",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Pricing, Payment & Fare Integrity",
+    "mentions": 8
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Driver Identity & Matching",
+    "mentions": 3
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Safety & Security Concern",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Cancellation Fine",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Driving Safety & Behavior",
+    "mentions": 2
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Lost & Found",
+    "mentions": 1
+  },
+  {
+    "week_id": "2026-09-20",
+    "cohort": "PAX_KSA",
+    "theme": "Driver Conduct & Professionalism",
+    "mentions": 1
+  }
+]

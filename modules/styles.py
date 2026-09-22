@@ -14,10 +14,27 @@ Jeeny brand rule that pink and purple should not appear at equal weight
 in one composition.
 """
 
+import html as _html
 from pathlib import Path
 from typing import Any
 
 import streamlit as st
+
+
+def esc(value: Any) -> str:
+    """HTML-escape any data-derived value before it's interpolated into a
+    template handed to st.markdown(unsafe_allow_html=True). Every f-string
+    in this module and in views/*.py that mixes literal markup with a
+    value pulled from data/*.json, Snowflake, or another external source
+    must wrap that value in esc() - a study title, an issue description,
+    a theme name, etc. can legitimately contain '<', '>', '&', or quote
+    characters (a driver quoted in feedback, a title with an ampersand),
+    and Streamlit does not escape unsafe_allow_html content for you.
+    Values that are entirely our own literal markup (CSS, a hex color, a
+    hard-coded class name) never need this - only values that came from
+    outside this file.
+    """
+    return _html.escape(str(value), quote=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
@@ -337,7 +354,7 @@ def audience_badge_html(audience: str) -> str:
     color = AUDIENCE_HEX.get(audience, COOL_GRAY)
     return (
         f'<span class="jih-badge" style="background:{color}1a;color:{color};'
-        f'border:1px solid {color}40;">{audience}</span>'
+        f'border:1px solid {color}40;">{esc(audience)}</span>'
     )
 
 
@@ -355,7 +372,7 @@ def status_pill_html(text: str) -> str:
     color = STATUS_HEX.get(text, COOL_GRAY)
     return (
         f'<span class="jih-badge" style="background:{color};color:#fff;'
-        f'letter-spacing:0.02em;">{text}</span>'
+        f'letter-spacing:0.02em;">{esc(text)}</span>'
     )
 
 
@@ -382,15 +399,15 @@ def issue_card_html(issue: dict[str, Any]) -> str:
     ref = ""
     if issue.get("reference_id"):
         who = "Passenger" if issue.get("reference_type") == "passenger" else "Driver"
-        ref = f'<div class="jih-issue-card__ref">{who} ID: {issue["reference_id"]}</div>'
+        ref = f'<div class="jih-issue-card__ref">{who} ID: {esc(issue["reference_id"])}</div>'
     color = STATUS_HEX.get(issue["status"], COOL_GRAY)
     return compact_html(f"""
     <div class="jih-issue-card" style="border-left-color:{color};">
       <div class="jih-issue-card__meta">
-        <span>{issue['source']} &middot; {issue['category']}</span>
-        <span style="color:{color};">{issue['status']}</span>
+        <span>{esc(issue['source'])} &middot; {esc(issue['category'])}</span>
+        <span style="color:{color};">{esc(issue['status'])}</span>
       </div>
-      <div class="jih-issue-card__desc">{issue['description']}</div>
+      <div class="jih-issue-card__desc">{esc(issue['description'])}</div>
       {ref}
     </div>
     """)
@@ -411,8 +428,8 @@ def status_bar_html(counts: dict[str, int]) -> str:
 def stat_tile_html(label: str, value: Any, accent_hex: str = JEENY_PURPLE) -> str:
     return compact_html(f"""
     <div class="jih-stat-tile">
-      <div class="jih-stat-tile__label">{label}</div>
-      <div class="jih-stat-tile__value" style="color:{accent_hex};">{value}</div>
+      <div class="jih-stat-tile__label">{esc(label)}</div>
+      <div class="jih-stat-tile__value" style="color:{accent_hex};">{esc(value)}</div>
     </div>
     """)
 

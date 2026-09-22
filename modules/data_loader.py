@@ -10,23 +10,26 @@ Current state (MVP):
     files in /data. This is the "sample data source" referenced in the
     project brief and is intentionally isolated behind get_* functions.
 
-Planned automation (v2+):
+Live today:
+    - In-app reviews & feedback (load_review_feedback) queries Snowflake
+      directly via modules/snowflake_client.py when st.secrets['snowflake']
+      is configured, falling back to data/sentiment_summary.json +
+      data/sentiment_themes.json otherwise.
+
+Planned automation (v2+) - not wired up yet, exist so the next engineer
+can implement one function at a time without touching Streamlit page code:
     - load_studies_from_snowflake()
     - load_responses_from_surveymonkey()
     - load_dashboard_metadata_from_powerbi()
     - load_studies_from_uploaded_csv()
-    - load_sentiment_from_snowflake()
     - load_fieldwork_from_google_sheets()
     - classify_text() / summarize_text()  (NLP automation placeholders)
-
-None of the placeholder functions below are wired up yet. They exist so
-the next engineer can implement one function at a time without touching
-Streamlit page code.
 """
 
 from __future__ import annotations
 
 import json
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -35,10 +38,14 @@ import streamlit as st
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 DASHBOARD_FILES_DIR = BASE_DIR / "dashboard_files"
+GENERATED_DASHBOARDS_DIR = DASHBOARD_FILES_DIR / "generated"
+
+# Fields a generated dashboard's <id>.meta.json must have to be trusted
+# and shown - see discover_generated_dashboards().
+_GENERATED_DASHBOARD_REQUIRED_FIELDS = ("id", "title", "generated_at", "week_id")
 
 STUDIES_PATH = DATA_DIR / "studies.json"
 DASHBOARDS_PATH = DATA_DIR / "dashboards.json"
-WEEKS_PATH = DATA_DIR / "weeks.json"
 HIGHLIGHTS_PATH = DATA_DIR / "highlights.json"
 SURVEYS_PATH = DATA_DIR / "surveys.json"
 ISSUES_PATH = DATA_DIR / "issues.json"
@@ -49,6 +56,7 @@ SENTIMENT_THEMES_PATH = DATA_DIR / "sentiment_themes.json"
 FIELDWORK_PATH = DATA_DIR / "fieldwork.json"
 
 ISSUE_STATUSES = ["New", "Under review", "Reported out", "Closed"]
+OPEN_ISSUE_STATUSES = ["New", "Under review", "Reported out"]
 COHORTS = ["DX_KSA", "DX_JOR", "PAX_KSA", "PAX_JOR"]
 COHORT_LABELS = {
     "DX_KSA": "DX · KSA",
@@ -56,9 +64,27 @@ COHORT_LABELS = {
     "PAX_KSA": "PAX · KSA",
     "PAX_JOR": "PAX · Jordan",
 }
-SOURCE_TYPES = ["social_media", "app_reviews"]
-SOURCE_TYPE_LABELS = {"social_media": "Social Media", "app_reviews": "App Reviews"}
+# Each cohort's (audience, market) pair, in the vocabulary the Home page
+# filters use - "Driver"/"Passenger" and "KSA"/"Jordan" - so the market and
+# audience selectors can filter cohort-tagged content generically instead
+# of every call site re-deriving this mapping.
+COHORT_AUDIENCE = {"DX_KSA": "Driver", "DX_JOR": "Driver", "PAX_KSA": "Passenger", "PAX_JOR": "Passenger"}
+COHORT_MARKET = {"DX_KSA": "KSA", "DX_JOR": "Jordan", "PAX_KSA": "KSA", "PAX_JOR": "Jordan"}
+MARKETS = ["All", "KSA", "Jordan"]
+AUDIENCES = ["All", "Driver", "Passenger"]
 THEME_TREND_WEEKS = 6
+
+SNOWFLAKE_UNAVAILABLE_MESSAGE = "Live Snowflake feedback data is not reachable right now"
+
+
+def cohort_matches(cohort: str, market: str, audience: str) -> bool:
+    """True if a cohort (DX_KSA etc.) matches the selected market/audience
+    filters, where "All" always matches."""
+    if market != "All" and COHORT_MARKET.get(cohort) != market:
+        return False
+    if audience != "All" and COHORT_AUDIENCE.get(cohort) != audience:
+        return False
+    return True
 
 
 # --------------------------------------------------------------------------
@@ -76,39 +102,131 @@ def load_studies() -> list[dict[str, Any]]:
         return json.load(f)
 
 
+def studies_matching_filters(studies: list[dict[str, Any]], market: str, audience: str) -> list[dict[str, Any]]:
+    def _match(s: dict[str, Any]) -> bool:
+        if audience != "All" and s.get("audience") != audience:
+            return False
+        if market != "All" and market not in (s.get("country") or []):
+            return False
+        return True
+
+    return [s for s in studies if _match(s)]
+
+
+def studies_completed_between(studies: list[dict[str, Any]], start_date: date, end_date: date) -> list[dict[str, Any]]:
+    """Studies whose "date" (completion/publish date) falls within
+    [start_date, end_date] inclusive."""
+    start_iso, end_iso = start_date.isoformat(), end_date.isoformat()
+    return [s for s in studies if start_iso <= s.get("date", "") <= end_iso]
+
+
 @st.cache_data(show_spinner=False)
 def load_dashboards() -> list[dict[str, Any]]:
-    """Return all dashboard catalogue entries. Reads data/dashboards.json.
-
-    The "file" field points to an HTML export under /dashboard_files.
-    If that file does not exist on disk, the UI shows a placeholder.
+    """Return all dashboard catalogue entries: the hand-curated ones in
+    data/dashboards.json plus any auto-discovered generated dashboards
+    that passed validation (see discover_generated_dashboards()) - this
+    is how a new Claude-generated weekly dashboard shows up on its own,
+    with no data/dashboards.json edit required.
     """
     with open(DASHBOARDS_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+        curated = json.load(f)
+    generated = discover_generated_dashboards()
+    return curated + generated["published"]
 
 
-@st.cache_data(show_spinner=False)
-def load_weeks() -> list[dict[str, Any]]:
-    """Return all weekly reporting periods, oldest first. Reads
-    data/weeks.json. To add a new week: append an entry with a unique
-    "id", set "is_current" on it, and unset "is_current" on the old one.
+def dashboards_matching_filters(dashboards: list[dict[str, Any]], market: str, audience: str) -> list[dict[str, Any]]:
+    def _match(d: dict[str, Any]) -> bool:
+        if audience != "All" and d.get("audience") != audience:
+            return False
+        if market != "All" and market not in (d.get("market") or ""):
+            return False
+        return True
+
+    return [d for d in dashboards if _match(d)]
+
+
+def dashboards_updated_between(
+    dashboards: list[dict[str, Any]], start_date: date, end_date: date
+) -> list[dict[str, Any]]:
+    """Dashboards whose "last_updated" falls within [start_date, end_date]
+    inclusive. Dashboards missing last_updated never match (they can't be
+    said to have updated in any particular week)."""
+    start_iso, end_iso = start_date.isoformat(), end_date.isoformat()
+    return [d for d in dashboards if d.get("last_updated") and start_iso <= d["last_updated"] <= end_iso]
+
+
+WEEKS_PAST = 26   # ~6 months of history in the picker
+WEEKS_FUTURE = 1  # let next week be selected a few days early if needed
+
+
+def _most_recent_sunday(day: date) -> date:
+    # date.weekday(): Monday=0 ... Sunday=6. Days since the most recent
+    # Sunday (0 if `day` itself is a Sunday).
+    return day - timedelta(days=(day.weekday() + 1) % 7)
+
+
+def _format_week_label(start: date) -> str:
+    # Avoid "%-d" (no leading zero): it's a glibc/macOS-only strftime
+    # extension and raises ValueError on Windows.
+    return f"Week of {start.strftime('%b')} {start.day}"
+
+
+def load_weeks(today: date | None = None) -> list[dict[str, Any]]:
+    """Return Sunday-Saturday reporting weeks, oldest first, generated
+    from the current date - not read from a file. `id` is the week's
+    start date (YYYY-MM-DD), so it's stable and sortable without a
+    separate numbering scheme. Covers the last WEEKS_PAST weeks through
+    WEEKS_FUTURE weeks ahead; the current week is flagged "is_current".
+
+    `today` is only for tests - real callers always use the current date.
     """
-    with open(WEEKS_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    today = today or date.today()
+    current_sunday = _most_recent_sunday(today)
+    weeks = []
+    for i in range(-WEEKS_PAST, WEEKS_FUTURE + 1):
+        start = current_sunday + timedelta(weeks=i)
+        end = start + timedelta(days=6)
+        weeks.append(
+            {
+                "id": start.isoformat(),
+                "label": _format_week_label(start),
+                "start_date": start.isoformat(),
+                "end_date": end.isoformat(),
+                "is_current": i == 0,
+            }
+        )
+    return weeks
 
 
-def current_week_id() -> str:
-    """Return the id of the week flagged "is_current", or the most
-    recent week if none is flagged."""
-    weeks = load_weeks()
-    for w in weeks:
-        if w.get("is_current"):
-            return w["id"]
-    return weeks[-1]["id"]
+def current_week_id(today: date | None = None) -> str:
+    """Return the id of the current Sunday-Saturday week."""
+    return _most_recent_sunday(today or date.today()).isoformat()
 
 
 def get_week(week_id: str) -> dict[str, Any] | None:
     return next((w for w in load_weeks() if w["id"] == week_id), None)
+
+
+def week_bounds(week_id: str) -> tuple[date, date] | None:
+    """Return (start_date, end_date) as date objects for a week_id, or
+    None if week_id isn't a valid ISO date."""
+    try:
+        start = date.fromisoformat(week_id)
+    except (ValueError, TypeError):
+        return None
+    return start, start + timedelta(days=6)
+
+
+def week_id_for_date(d: date) -> str:
+    """Return the week_id (Sunday start date) whose Sun-Sat range contains `d`."""
+    return _most_recent_sunday(d).isoformat()
+
+
+def previous_week_id(week_id: str) -> str | None:
+    bounds = week_bounds(week_id)
+    if not bounds:
+        return None
+    return (bounds[0] - timedelta(days=7)).isoformat()
 
 
 @st.cache_data(show_spinner=False)
@@ -117,15 +235,22 @@ def _load_highlights_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
-def load_highlights(week_id: str) -> dict[str, list[str]]:
-    """Return {cohort: [bullets]} for the given week. Cohorts are one of
+def load_highlights(week_id: str) -> dict[str, dict[str, Any]]:
+    """Return {cohort: {"bullets": [...], "dashboard_id": str|None,
+    "study_id": str|None}} for the given week. Cohorts are one of
     DX_KSA, DX_JOR, PAX_KSA, PAX_JOR. A bullet starting with "Needs
-    attention:" is flagged in the UI. Reads data/highlights.json.
+    attention:" is flagged in the UI. "dashboard_id"/"study_id" (either
+    or both may be set) back the "link to the supporting study or
+    dashboard" the Home page shows per card. Reads data/highlights.json.
     """
-    result: dict[str, list[str]] = {}
+    result: dict[str, dict[str, Any]] = {}
     for h in _load_highlights_raw():
         if h["week_id"] == week_id:
-            result[h["cohort"]] = h["bullets"]
+            result[h["cohort"]] = {
+                "bullets": h["bullets"],
+                "dashboard_id": h.get("dashboard_id"),
+                "study_id": h.get("study_id"),
+            }
     return result
 
 
@@ -135,23 +260,41 @@ def _load_surveys_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
-def load_surveys(week_id: str) -> list[dict[str, Any]]:
-    """Return surveys completed in the given week, with completion_pct
-    and the linked dashboard's title attached. Reads data/surveys.json.
+def load_surveys(week_id: str, market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
+    """Return published surveys for the given week (never "draft" rows -
+    those are SurveyMonkey-discovered surveys awaiting a human to assign
+    a week_id/study before they're shown as real results), with
+    completion_pct and the linked dashboard's title attached.
+
+    A row's optional "market"/"audience" fields are matched against the
+    market/audience filters when set on the row; a row that doesn't carry
+    them always passes (untagged surveys aren't hidden by the filters).
+
+    `sent` is optional - a row with sent=None (or missing) means the
+    invitation count isn't verified, so completion_pct is None rather
+    than guessed. Reads data/surveys.json.
     """
     dashboards_by_id = {d["id"]: d for d in load_dashboards()}
     out = []
     for s in _load_surveys_raw():
-        if s["week_id"] != week_id:
+        if s.get("week_id") != week_id:
             continue
-        sent = s["sent"]
-        responses = s["responses"]
+        if s.get("status") == "draft":
+            continue
+        if market != "All" and s.get("market") not in (None, market):
+            continue
+        if audience != "All" and s.get("audience") not in (None, audience):
+            continue
+        sent = s.get("sent")
+        responses = s.get("responses")
         dashboard = dashboards_by_id.get(s.get("dashboard_id"))
+        completion_pct = round((responses / sent) * 100, 1) if sent and responses is not None else None
         out.append(
             {
                 **s,
-                "completion_pct": round((responses / sent) * 100, 1) if sent else 0,
+                "completion_pct": completion_pct,
                 "dashboard_title": dashboard["title"] if dashboard else None,
+                "dashboard_link_id": dashboard["id"] if dashboard else None,
             }
         )
     return out
@@ -163,15 +306,49 @@ def _load_issues_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
-def load_issues(week_id: str) -> list[dict[str, Any]]:
+_ISSUE_SOURCE_TO_MARKET = {"KSA": "KSA", "JO": "Jordan"}
+_ISSUE_REF_TYPE_TO_AUDIENCE = {"driver": "Driver", "passenger": "Passenger"}
+
+
+def _issue_matches_filters(issue: dict[str, Any], market: str, audience: str) -> bool:
+    if market != "All" and _ISSUE_SOURCE_TO_MARKET.get(issue.get("source")) != market:
+        return False
+    if audience != "All":
+        issue_audience = _ISSUE_REF_TYPE_TO_AUDIENCE.get(issue.get("reference_type"))
+        if issue_audience is not None and issue_audience != audience:
+            return False
+    return True
+
+
+def load_issues(week_id: str, market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
     """Return WhatsApp/technical issues manually logged for the given
     week, most recent first. Each item may carry a masked
     reference_type/reference_id ("driver" or "passenger" + an internal
     case code) - never a phone number or other personal identifier, per
-    the privacy rules in README.md. Reads data/issues.json.
+    the privacy rules in README.md. An issue with no reference_type (a
+    general/technical one, not tied to one person) always passes the
+    audience filter. Reads data/issues.json.
     """
-    items = [i for i in _load_issues_raw() if i["week_id"] == week_id]
+    items = [
+        i
+        for i in _load_issues_raw()
+        if i["week_id"] == week_id and _issue_matches_filters(i, market, audience)
+    ]
     return sorted(items, key=lambda i: i["logged_date"], reverse=True)
+
+
+def load_open_issues(market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
+    """Return every currently-open (non-Closed) issue across all weeks -
+    this is an all-time backlog count, not scoped to one reporting week,
+    which is what the Home page's "Open critical issues" stat card shows
+    (labeled explicitly as all-time, per spec - it does not reset with
+    the week picker).
+    """
+    return [
+        i
+        for i in _load_issues_raw()
+        if i["status"] in OPEN_ISSUE_STATUSES and _issue_matches_filters(i, market, audience)
+    ]
 
 
 def issue_status_counts(issues: list[dict[str, Any]]) -> dict[str, int]:
@@ -187,15 +364,33 @@ def _load_msu_dif_raw() -> dict[str, Any]:
         return json.load(f)
 
 
-def load_msu_dif_performance(week_id: str) -> dict[str, Any]:
+_COUNTRY_CODE_TO_MARKET = {"KSA": "KSA", "JO": "Jordan"}
+
+
+def load_msu_dif_performance(week_id: str, market: str = "All") -> dict[str, Any]:
     """Return {"meta": {"cities_live", "cities_total"}, "rows": [...]}
     for MSU (mystery shopper) and DIF (driver in-field) fieldwork in the
-    given week. Reads data/msu_dif_performance.json.
+    given week. MSU/DIF sessions aren't tied to a driver/passenger
+    audience, so there's no audience filter here - only market. Reads
+    data/msu_dif_performance.json.
     """
     raw = _load_msu_dif_raw()
     meta = raw["meta"].get(week_id, {"cities_live": 0, "cities_total": 0})
-    rows = [r for r in raw["rows"] if r["week_id"] == week_id]
+    rows = [
+        r
+        for r in raw["rows"]
+        if r["week_id"] == week_id and (market == "All" or _COUNTRY_CODE_TO_MARKET.get(r.get("country")) == market)
+    ]
     return {"meta": meta, "rows": rows}
+
+
+def load_msu_dif_performance_all(market: str = "All") -> list[dict[str, Any]]:
+    """Return every MSU/DIF fieldwork row across all weeks (most recent
+    week first), for the Fieldwork & Quality detail page's full history.
+    """
+    raw = _load_msu_dif_raw()
+    rows = [r for r in raw["rows"] if market == "All" or _COUNTRY_CODE_TO_MARKET.get(r.get("country")) == market]
+    return sorted(rows, key=lambda r: r["week_id"], reverse=True)
 
 
 @st.cache_data(show_spinner=False)
@@ -213,22 +408,22 @@ def load_weekly_digest(week_id: str) -> dict[str, Any]:
 
 
 # --------------------------------------------------------------------------
-# Social sentiment & app reviews
+# In-app reviews & feedback
 #
-# Two files, kept deliberately separate so item volume is never confused
-# with theme volume:
-#   - sentiment_summary.json: one row per (week, cohort, source_type) with
-#     the week's item_count (reviews/posts actually collected) plus
-#     whatever optional aggregate fields are available (rating, sentiment
-#     mix). This is the "how much did we look at, and what's the headline
-#     number" row.
-#   - sentiment_themes.json: one row per (week, cohort, source_type,
-#     theme) with that theme's mention count. A single review/post can be
-#     tagged with more than one theme, so SUM(mentions) for a week can
-#     legitimately exceed that week's item_count in sentiment_summary -
-#     never derive one from the other.
-# Both are empty lists until real data is added; see README.md for the
-# exact field-by-field format.
+# Live source (preferred): Snowflake JEENY_PROD.GENERAL.FEEDBACKEVENTS via
+# modules/snowflake_client.py - one unified event log covering driver and
+# passenger ratings, in-app ratings, and categorized support-ticket
+# feedback across KSA and Jordan. This is NOT app-store or social-media
+# data - do not label it that way in the UI.
+#
+# Offline fallback: data/sentiment_summary.json + data/sentiment_themes.json,
+# kept current by scripts/refresh_snowflake_data.py on a schedule (see
+# README.md) for whenever the app itself has no direct Snowflake access
+# (e.g. local dev without secrets configured). Two files, kept
+# deliberately separate so item volume is never confused with theme
+# volume: a single item can carry more than one theme, so SUM(mentions)
+# for a week can legitimately exceed that week's item_count - never
+# derive one from the other.
 # --------------------------------------------------------------------------
 
 
@@ -238,55 +433,151 @@ def _load_sentiment_summary_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
-def load_sentiment_summary(week_id: str, cohort: str, source_type: str) -> dict[str, Any] | None:
-    """Return the one summary row for this (week, cohort, source_type),
-    or None if nothing has been recorded for it yet."""
-    for row in _load_sentiment_summary_raw():
-        if row.get("week_id") == week_id and row.get("cohort") == cohort and row.get("source_type") == source_type:
-            return row
-    return None
-
-
 @st.cache_data(show_spinner=False)
 def _load_sentiment_themes_raw() -> list[dict[str, Any]]:
     with open(SENTIMENT_THEMES_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def load_theme_trend(
-    week_id: str, cohort: str, source_type: str, weeks_back: int = THEME_TREND_WEEKS
-) -> list[dict[str, Any]]:
-    """Return up to `weeks_back` weeks of theme-mention data ending at
-    week_id (oldest first), as [{"week_id", "label", "themes": {theme:
-    mentions}}, ...]. Returns fewer entries if fewer weeks exist in
-    weeks.json - never pads or invents data. Returns [] if week_id isn't
-    a known week.
+@st.cache_data(ttl=900, show_spinner="Querying Snowflake...")
+def _fetch_snowflake_range_cached(range_start_iso: str, range_end_iso: str):
+    """Cached for 15 minutes per (range_start, range_end) - shared across
+    all four cohorts at a given week/weeks_back, since the underlying
+    Snowflake fetch is cohort-agnostic (filtered to a cohort afterward in
+    Python). Returns (summary_rows, theme_rows, error). Records the
+    refresh outcome exactly once per real fetch (not once per cohort)
+    because this function's cache makes repeat calls with the same range
+    not re-execute the body.
     """
+    from datetime import date as _date
+
+    from . import refresh_state, snowflake_client
+
+    range_start = _date.fromisoformat(range_start_iso)
+    range_end = _date.fromisoformat(range_end_iso)
+
+    summary_rows, error = snowflake_client.fetch_review_summary_range(range_start, range_end)
+    if error is None:
+        theme_rows, error = snowflake_client.fetch_theme_counts_range(range_start, range_end)
+    else:
+        theme_rows = None
+
+    if error is not None:
+        refresh_state.record_refresh("snowflake", "error", error)
+        return None, None, error
+
+    refresh_state.record_refresh(
+        "snowflake", "ok", rows_written=len(summary_rows) + len(theme_rows)
+    )
+    return summary_rows, theme_rows, None
+
+
+def load_review_feedback(week_id: str, cohort: str, weeks_back: int = THEME_TREND_WEEKS) -> dict[str, Any]:
+    """The single entry point views/home.py uses for the in-app reviews &
+    feedback panel. Tries live Snowflake first (if st.secrets['snowflake']
+    is configured); falls back to the offline JSON files otherwise.
+    Returns:
+      {
+        "mode": "live" | "offline" | "unavailable",
+        "error": str | None,      # set only when mode == "unavailable"
+        "summary": {...} | None,  # item_count, rating, rating_count,
+                                   # positive/neutral/negative_count,
+                                   # source, last_updated - matches the
+                                   # data/sentiment_summary.json row shape
+                                   # either way, live or offline
+        "trend": [{"week_id","label","themes":{theme:mentions}}, ...],
+      }
+    "unavailable" means Snowflake is configured but the query failed
+    (bad credentials, warehouse suspended, network error, etc.) - the
+    caller should show that error, not silently show offline data instead
+    (that would misrepresent a real outage as "nothing happened yet").
+    "offline" is not the same as "fake" - data/sentiment_summary.json and
+    data/sentiment_themes.json are meant to be kept current by
+    scripts/refresh_snowflake_data.py, so "offline" data is real,
+    scheduled-refresh data whenever that pipeline is running; the caller
+    should trust `summary["source"]`/`summary["last_updated"]` (which
+    describe where that row actually came from) rather than assume
+    "offline" means "sample".
+    """
+    from . import snowflake_client
+
     weeks = load_weeks()
     ids_in_order = [w["id"] for w in weeks]
     if week_id not in ids_in_order:
-        return []
+        return {"mode": "offline", "error": None, "summary": None, "trend": []}
     idx = ids_in_order.index(week_id)
     start_idx = max(0, idx - weeks_back + 1)
     window = weeks[start_idx : idx + 1]
 
-    raw = _load_sentiment_themes_raw()
+    if snowflake_client.is_configured():
+        summary_rows, theme_rows, error = _fetch_snowflake_range_cached(window[0]["id"], window[-1]["id"])
+        if error is not None:
+            return {"mode": "unavailable", "error": error, "summary": None, "trend": []}
+
+        audience = COHORT_AUDIENCE[cohort]
+        market = COHORT_MARKET[cohort]
+
+        trend = []
+        for w in window:
+            w_start = date.fromisoformat(w["id"])
+            themes = {
+                r["THEME"]: r["MENTIONS"]
+                for r in theme_rows
+                if r["WEEK_START"] == w_start and r["AUDIENCE"] == audience and r["MARKET"] == market
+            }
+            trend.append({"week_id": w["id"], "label": w["label"], "themes": themes})
+
+        sel_start = date.fromisoformat(week_id)
+        summary_row = next(
+            (
+                r
+                for r in summary_rows
+                if r["WEEK_START"] == sel_start and r["AUDIENCE"] == audience and r["MARKET"] == market
+            ),
+            None,
+        )
+        summary = None
+        if summary_row is not None:
+            avg_rating = summary_row.get("AVG_RATING")
+            latest_event = summary_row.get("LATEST_EVENT_AT")
+            summary = {
+                "item_count": summary_row.get("THEMED_ITEMS") or 0,
+                "rating": round(float(avg_rating), 2) if avg_rating is not None else None,
+                "rating_count": summary_row.get("RATED_ITEMS") or 0,
+                "positive_count": summary_row.get("POSITIVE_COUNT"),
+                "neutral_count": summary_row.get("NEUTRAL_COUNT"),
+                "negative_count": summary_row.get("NEGATIVE_COUNT"),
+                "source": "Jeeny in-app ratings & categorized feedback (Snowflake, live)",
+                "last_updated": latest_event.date().isoformat() if hasattr(latest_event, "date") else None,
+            }
+        return {"mode": "live", "error": None, "summary": summary, "trend": trend}
+
+    # Offline fallback - the JSON files kept current by the scheduled script.
+    summary = next(
+        (
+            row
+            for row in _load_sentiment_summary_raw()
+            if row.get("week_id") == week_id and row.get("cohort") == cohort
+        ),
+        None,
+    )
+    themes_raw = _load_sentiment_themes_raw()
     trend = []
     for w in window:
         themes: dict[str, int] = {}
-        for row in raw:
-            if row.get("week_id") == w["id"] and row.get("cohort") == cohort and row.get("source_type") == source_type:
+        for row in themes_raw:
+            if row.get("week_id") == w["id"] and row.get("cohort") == cohort:
                 theme = row.get("theme")
                 mentions = row.get("mentions")
                 if theme is not None and isinstance(mentions, (int, float)):
                     themes[theme] = themes.get(theme, 0) + mentions
         trend.append({"week_id": w["id"], "label": w.get("label", w["id"]), "themes": themes})
-    return trend
+    return {"mode": "offline", "error": None, "summary": summary, "trend": trend}
 
 
 def top_themes_with_delta(trend: list[dict[str, Any]], top_n: int = 5) -> list[dict[str, Any]]:
-    """From load_theme_trend()'s output, return the top `top_n` themes for
-    the most recent week in the trend window, each as {"theme",
+    """From load_review_feedback()'s "trend" list, return the top `top_n`
+    themes for the most recent week in the window, each as {"theme",
     "mentions", "delta", "is_new"}. `delta` is the change vs. the
     previous week in the window (None if that theme has no prior-week
     count to compare against - e.g. only one week of history exists, or
@@ -316,13 +607,108 @@ def _load_fieldwork_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
-def load_fieldwork(week_id: str) -> list[dict[str, Any]]:
+def load_fieldwork(week_id: str, market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
     """Return fieldwork completed in the given week (data/fieldwork.json),
     most recently completed first. Rows missing "completion_date" sort
-    last rather than crashing.
+    last rather than crashing. A row's optional "audience" field is
+    matched against the audience filter when set; rows without it always
+    pass (market already has a required field on every row).
     """
-    items = [f for f in _load_fieldwork_raw() if f.get("week_id") == week_id]
+    items = [
+        f
+        for f in _load_fieldwork_raw()
+        if f.get("week_id") == week_id
+        and (market == "All" or f.get("market") == market)
+        and (audience == "All" or f.get("audience") in (None, audience))
+    ]
     return sorted(items, key=lambda f: f.get("completion_date") or "", reverse=True)
+
+
+def load_fieldwork_all(market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
+    """Return every fieldwork record across all weeks (most recently
+    completed first), for the Fieldwork & Quality detail page's full
+    history. Same market/audience filtering as load_fieldwork(), just not
+    scoped to a single week.
+    """
+    items = [
+        f
+        for f in _load_fieldwork_raw()
+        if (market == "All" or f.get("market") == market)
+        and (audience == "All" or f.get("audience") in (None, audience))
+    ]
+    return sorted(items, key=lambda f: f.get("completion_date") or "", reverse=True)
+
+
+def discover_generated_dashboards() -> dict[str, list[dict[str, Any]]]:
+    """Scan dashboard_files/generated/ for Claude-generated (or any
+    automation-generated) weekly dashboards and validate each before it's
+    allowed to appear anywhere in the app. This - plus load_dashboards()
+    including its "published" output - is the "hub discovers new and
+    updated files by stable ID, validates required metadata, and displays
+    outputs that pass validation; flags incomplete outputs for review"
+    mechanism: durable storage is this folder in the git repo itself, and
+    "new file appears" means "next page load picks it up", no
+    data/dashboards.json edit required.
+
+    Convention: each dashboard is two files sharing a basename -
+    `<slug>.html` (the report itself) and `<slug>.meta.json` (its
+    metadata). A meta.json missing any of
+    _GENERATED_DASHBOARD_REQUIRED_FIELDS, or whose `id` collides with
+    another generated dashboard's `id` (stable-ID discovery only works if
+    IDs are actually stable and unique), is returned under "needs_review"
+    instead of "published" - it never silently appears in the UI.
+
+    Returns {"published": [...], "needs_review": [{"file":..., "reason":...}, ...]}.
+    Each published entry has the same shape as a data/dashboards.json row
+    (title, description, audience, market, last_updated, file, ...) plus
+    `"source": "generated"` and whatever extra metadata the meta.json
+    carried (e.g. "metrics", "study_id").
+    """
+    published: list[dict[str, Any]] = []
+    needs_review: list[dict[str, Any]] = []
+
+    if not GENERATED_DASHBOARDS_DIR.exists():
+        return {"published": published, "needs_review": needs_review}
+
+    seen_ids: set[str] = set()
+    for meta_path in sorted(GENERATED_DASHBOARDS_DIR.glob("*.meta.json")):
+        slug = meta_path.name[: -len(".meta.json")]
+        html_path = meta_path.with_name(f"{slug}.html")
+
+        try:
+            with open(meta_path, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+        except (json.JSONDecodeError, OSError) as exc:
+            needs_review.append({"file": meta_path.name, "reason": f"Could not read/parse meta.json: {exc}"})
+            continue
+
+        missing = [field for field in _GENERATED_DASHBOARD_REQUIRED_FIELDS if not meta.get(field)]
+        if missing:
+            needs_review.append({"file": meta_path.name, "reason": f"Missing required field(s): {', '.join(missing)}"})
+            continue
+        if not html_path.exists():
+            needs_review.append({"file": meta_path.name, "reason": f"No matching report file: {html_path.name}"})
+            continue
+        if meta["id"] in seen_ids:
+            needs_review.append({"file": meta_path.name, "reason": f"Duplicate id '{meta['id']}' - ids must be unique"})
+            continue
+        seen_ids.add(meta["id"])
+
+        published.append(
+            {
+                **meta,
+                "source": "generated",
+                "title": meta["title"],
+                "description": meta.get("description", ""),
+                "audience": meta.get("audience", "Driver"),
+                "market": meta.get("market", "KSA & Jordan"),
+                "last_updated": meta.get("generated_at", "")[:10],
+                "file": str(html_path.relative_to(BASE_DIR)),
+                "is_sample_data": False,
+            }
+        )
+
+    return {"published": published, "needs_review": needs_review}
 
 
 def dashboard_file_exists(dashboard: dict[str, Any]) -> bool:
@@ -417,27 +803,6 @@ def load_studies_from_uploaded_csv(uploaded_file: Any) -> list[dict[str, Any]]:
     page) instead of editing studies.json by hand.
     """
     raise NotImplementedError("CSV upload ingestion is not yet implemented for Jeeny Insights Hub.")
-
-
-def load_sentiment_from_snowflake(week_id: str, connection_config: dict[str, Any] | None = None) -> tuple[list, list]:
-    """Placeholder for a future Snowflake-backed sentiment feed (social
-    listening + app store review exports, e.g. via Talkwalker/Brandwatch/
-    App Store Connect/Play Console pipelines landed in Snowflake).
-
-    Intended shape once implemented:
-        1. Open a connection using `snowflake-connector-python` with
-           credentials from st.secrets (never hard-coded).
-        2. Query two views for the given week - one that mirrors the
-           per-(week, cohort, source_type) row shape used by
-           load_sentiment_summary(), one that mirrors the per-(week,
-           cohort, source_type, theme) row shape used by
-           load_theme_trend() - and return (summary_rows, theme_rows).
-        3. Replace the bodies of _load_sentiment_summary_raw() and
-           _load_sentiment_themes_raw() with these queries (cached per
-           week_id instead of read-once-and-filter, since a warehouse
-           query is more expensive than reading a small JSON file).
-    """
-    raise NotImplementedError("Snowflake sentiment integration is not yet configured for Jeeny Insights Hub.")
 
 
 def load_fieldwork_from_google_sheets(sheet_id: str | None = None) -> list[dict[str, Any]]:

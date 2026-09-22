@@ -24,6 +24,7 @@ pages = [
     st.Page("views/home.py", title="Home", icon=":material/home:", default=True),
     st.Page("views/studies.py", title="Studies Library", icon=":material/library_books:"),
     st.Page("views/dashboards.py", title="Dashboards", icon=":material/bar_chart:"),
+    st.Page("views/fieldwork.py", title="Fieldwork & Quality", icon=":material/fact_check:"),
     st.Page("views/weekly.py", title="Weekly Summary", icon=":material/calendar_month:"),
     st.Page("views/about.py", title="About", icon=":material/info:"),
 ]

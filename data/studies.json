@@ -23,7 +23,7 @@
   {
     "id": "driver-in-app-reviews",
     "title": "Driver In-App Reviews",
-    "description": "Thematic analysis of driver app store and in-app reviews, tagged by sentiment and topic to surface recurring friction points.",
+    "description": "Thematic analysis of driver in-app reviews and feedback, tagged by sentiment and topic to surface recurring friction points.",
     "audience": "Driver",
     "country": ["KSA", "Jordan"],
     "research_type": "Reviews",

@@ -1,0 +1,17 @@
+{
+  "id": "driver-payment-fare-2026-09-20",
+  "title": "Driver Payment & Fare Issues - Week of Sep 20",
+  "description": "Auto-generated from Jeeny's in-app feedback data: KSA and Jordan driver payment/fare theme volume for the current reporting week.",
+  "generated_at": "2026-09-22T10:50:00Z",
+  "week_id": "2026-09-20",
+  "audience": "Driver",
+  "market": "KSA & Jordan",
+  "study_id": null,
+  "metrics": {
+    "themed_items_ksa": 629,
+    "themed_items_jordan": 335,
+    "payment_fare_mentions_ksa": 262,
+    "payment_fare_mentions_jordan": 189
+  },
+  "generated_by": "Claude (one-time demonstration pull via Snowflake MCP access, 2026-09-22)"
+}

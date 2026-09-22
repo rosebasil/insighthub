@@ -1,6 +1,6 @@
 [
   {
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "is_sample_data": true,
     "major_changes": [
       {
@@ -10,7 +10,7 @@
       },
       {
         "title": "Commission-breakdown visibility is the week's clearest cross-source theme",
-        "detail": "Raised in the driver NPS pulse, the app store review analysis, and directly in the WhatsApp group - drivers want to see the commission split before accepting a ride.",
+        "detail": "Raised in the driver NPS pulse, the in-app feedback theme analysis, and directly in the WhatsApp group - drivers want to see the commission split before accepting a ride.",
         "severity": "watch"
       },
       {
@@ -26,7 +26,7 @@
     ]
   },
   {
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "is_sample_data": true,
     "major_changes": [
       {
@@ -46,7 +46,7 @@
     ]
   },
   {
-    "week_id": "2026-w37",
+    "week_id": "2026-09-06",
     "is_sample_data": true,
     "major_changes": [
       {

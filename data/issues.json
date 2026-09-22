@@ -1,7 +1,7 @@
 [
   {
     "id": "iss-039-01",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "KSA",
     "category": "Tech",
     "status": "Reported out",
@@ -12,7 +12,7 @@
   },
   {
     "id": "iss-039-02",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "JO",
     "category": "Feedback",
     "status": "Under review",
@@ -23,7 +23,7 @@
   },
   {
     "id": "iss-039-03",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "KSA",
     "category": "Fraud signal",
     "status": "Under review",
@@ -34,7 +34,7 @@
   },
   {
     "id": "iss-039-04",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "KSA",
     "category": "Tech",
     "status": "Closed",
@@ -45,7 +45,7 @@
   },
   {
     "id": "iss-039-05",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "JO",
     "category": "Feedback",
     "status": "New",
@@ -56,7 +56,7 @@
   },
   {
     "id": "iss-039-06",
-    "week_id": "2026-w39",
+    "week_id": "2026-09-20",
     "source": "KSA",
     "category": "Feedback",
     "status": "Under review",
@@ -67,7 +67,7 @@
   },
   {
     "id": "iss-038-01",
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "source": "KSA",
     "category": "Tech",
     "status": "Closed",
@@ -78,7 +78,7 @@
   },
   {
     "id": "iss-038-02",
-    "week_id": "2026-w38",
+    "week_id": "2026-09-13",
     "source": "JO",
     "category": "Feedback",
     "status": "Closed",

@@ -1,0 +1,14 @@
+{
+  "snowflake": {
+    "status": "manual_snapshot",
+    "message": "data/sentiment_summary.json and data/sentiment_themes.json currently hold a real one-time snapshot pulled 2026-09-22 via Claude's interactive Snowflake access, using the exact same validated queries as modules/snowflake_client.py and scripts/refresh_snowflake_data.py. This is real Jeeny data, not a sample. The automated path (the scheduled script / live app connection) is still blocked pending SNOWFLAKE_ACCOUNT / SNOWFLAKE_USER / SNOWFLAKE_PASSWORD credentials - see README.md 'Connecting real data sources'.",
+    "rows_written": 237,
+    "checked_at": "2026-09-22T10:50:00+00:00"
+  },
+  "surveymonkey": {
+    "status": "error",
+    "message": "Missing SURVEYMONKEY_ACCESS_TOKEN environment variable",
+    "rows_written": null,
+    "checked_at": "2026-09-22T10:39:27+00:00"
+  }
+}
