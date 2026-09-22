@@ -1,0 +1,29 @@
+{
+  "run_id": "adhoc-driver-onboarding-friction-quick-look-2026-09-22",
+  "workflow_id": "adhoc-driver-onboarding-friction-quick-look",
+  "topic": "Driver Onboarding Friction - Quick Look",
+  "source": "Manual",
+  "owner": "rose.alnirab@jeeny.me",
+  "cadence": "on-demand",
+  "period_start": "2026-09-22",
+  "period_end": "2026-09-22",
+  "market": "All",
+  "audience": "All",
+  "data_as_of": "2026-09-22T12:10:22+00:00",
+  "output_formats": [
+    "dashboard_html"
+  ],
+  "version": 1,
+  "source_references": [],
+  "status": "published",
+  "generated_at": "2026-09-22T12:10:22+00:00",
+  "generated_by": "Add ad hoc study form",
+  "objective": "Understand why new drivers drop off during onboarding.",
+  "findings": "3 of 8 interviewed drivers cited document verification as the main blocker.",
+  "files": [
+    {
+      "format": "dashboard_html",
+      "path": "adhoc-driver-onboarding-friction-quick-look-2026-09-22.html"
+    }
+  ]
+}

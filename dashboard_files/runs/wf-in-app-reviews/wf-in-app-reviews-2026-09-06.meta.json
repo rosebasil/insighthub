@@ -1,0 +1,29 @@
+{
+  "run_id": "wf-in-app-reviews-2026-09-06",
+  "workflow_id": "wf-in-app-reviews",
+  "topic": "Driver & Passenger In-App Reviews",
+  "source": "Snowflake",
+  "owner": "rose.alnirab@jeeny.me",
+  "cadence": "biweekly",
+  "period_start": "2026-09-06",
+  "period_end": "2026-09-19",
+  "market": "All",
+  "audience": "All",
+  "data_as_of": "2026-09-22T12:05:00+00:00",
+  "output_formats": [
+    "dashboard_html"
+  ],
+  "version": 1,
+  "source_references": [
+    "JEENY_PROD.GENERAL.FEEDBACKEVENTS"
+  ],
+  "status": "published",
+  "generated_at": "2026-09-22T12:05:00+00:00",
+  "generated_by": "manual real Snowflake pull via Claude interactive session, 2026-09-22 (reshaped from data/sentiment_summary.json + sentiment_themes.json, themselves a real snapshot - automated path pending SNOWFLAKE_* credentials, see README)",
+  "files": [
+    {
+      "format": "dashboard_html",
+      "path": "wf-in-app-reviews-2026-09-06.html"
+    }
+  ]
+}

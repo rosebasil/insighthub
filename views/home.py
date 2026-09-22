@@ -6,6 +6,7 @@ import streamlit as st
 
 from modules import data_loader as dl
 from modules import refresh_state
+from modules import register
 from modules import styles
 
 styles.page_title("Jeeny Insights Hub")
@@ -325,6 +326,52 @@ else:
             st.session_state.open_dashboard = s["dashboard_link_id"]
             st.switch_page("views/dashboards.py")
     styles.sample_data_caption()
+
+st.divider()
+
+# --- Recurring workflow status + recent reports ---------------------------
+st.markdown("#### Recurring workflow status")
+registered_workflows = register.load_register_raw()
+all_runs = register.discover_runs()["published"]
+if not registered_workflows:
+    st.caption("No workflows registered yet.")
+else:
+    whcols = st.columns([2.4, 1, 1.2, 1.3, 1.8])
+    for c, label in zip(whcols, ["Topic", "Cadence", "Source", "Status", "Latest run / next due"]):
+        c.markdown(
+            f"<span style='font-size:11px;color:{styles.TEXT_MUTED};font-weight:700;text-transform:uppercase;'>{label}</span>",
+            unsafe_allow_html=True,
+        )
+    for w in registered_workflows:
+        latest = register.latest_run(w["id"], all_runs)
+        wrcols = st.columns([2.4, 1, 1.2, 1.3, 1.8])
+        wrcols[0].write(w["topic"])
+        wrcols[1].write(w.get("cadence", "—"))
+        wrcols[2].write(w.get("source", "—"))
+        wrcols[3].markdown(styles.status_pill_html(w.get("status", "active")), unsafe_allow_html=True)
+        if latest:
+            next_label = register.next_expected_label(w.get("cadence", "on-demand"), latest.get("period_end"))
+            wrcols[4].write(f"Through {latest['period_end']} · {next_label}")
+        else:
+            wrcols[4].write("No runs yet")
+    st.page_link("views/studies.py", label="Open Studies Library for full run history", icon=":material/library_books:")
+
+recent_runs = sorted(all_runs, key=lambda r: r.get("generated_at") or "", reverse=True)[:3]
+if recent_runs:
+    st.markdown("###### Recent reports")
+    rr_cols = st.columns(len(recent_runs))
+    for col, run in zip(rr_cols, recent_runs):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"**{run.get('topic', run['workflow_id'])}**")
+                st.caption(f"{run.get('period_start', '?')} → {run.get('period_end', '?')}")
+                fmt_badges = "".join(
+                    f'<span class="jih-badge" style="background:{styles.BG_LIGHT_GREY};color:{styles.JEENY_NAVY};'
+                    f'border:1px solid {styles.BORDER_COLOR};">{styles.esc(f["format"])}</span>'
+                    for f in run.get("files", [])
+                )
+                st.markdown(fmt_badges, unsafe_allow_html=True)
+                st.page_link("views/studies.py", label="Open in Studies Library", icon=":material/arrow_forward:")
 
 st.divider()
 

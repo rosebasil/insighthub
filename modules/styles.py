@@ -84,6 +84,13 @@ STATUS_HEX = {
     "REVIEW": "#C79A1E",
     "BELOW MIN": "#C0392B",
     "SCORING PENDING": COOL_GRAY,
+    "published": "#4C9A5B",
+    "failed": "#C0392B",
+    "needs_review": "#C79A1E",
+    "manual snapshot": "#C79A1E",
+    "active": "#4C9A5B",
+    "paused": COOL_GRAY,
+    "needs_setup": "#C79A1E",
 }
 ISSUE_STATUS_ORDER = ["New", "Under review", "Reported out", "Closed"]
 

@@ -1,0 +1,121 @@
+[
+  {
+    "id": "wf-driver-nps",
+    "topic": "Driver NPS",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "SurveyMonkey",
+    "cadence": "weekly",
+    "market": "All",
+    "audience": "Driver",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this.",
+    "readiness_rule": "Ready once the SurveyMonkey collector for the reporting week closes (Sat 23:59) and response counts are final.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "needs_setup"
+  },
+  {
+    "id": "wf-passenger-nps",
+    "topic": "Passenger NPS",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "SurveyMonkey",
+    "cadence": "weekly",
+    "market": "All",
+    "audience": "Passenger",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this.",
+    "readiness_rule": "Ready once the SurveyMonkey collector for the reporting week closes (Sat 23:59) and response counts are final.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "needs_setup"
+  },
+  {
+    "id": "wf-waiting-time-perception-jor",
+    "topic": "Waiting-Time Perception (Jordan)",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "SurveyMonkey",
+    "cadence": "on-demand",
+    "market": "Jordan",
+    "audience": "Passenger",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this.",
+    "readiness_rule": "Ready once the SurveyMonkey collector closes and response counts are final.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "needs_setup"
+  },
+  {
+    "id": "wf-driver-in-app-feedback-pulse-ksa",
+    "topic": "Driver In-App Feedback Pulse (KSA)",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "SurveyMonkey",
+    "cadence": "on-demand",
+    "market": "KSA",
+    "audience": "Driver",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this.",
+    "readiness_rule": "Ready once the SurveyMonkey collector closes; invitations-sent count only shown when verified, per the survey tracker's existing rule.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "needs_setup"
+  },
+  {
+    "id": "wf-in-app-reviews",
+    "topic": "Driver & Passenger In-App Reviews",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "Snowflake",
+    "cadence": "biweekly",
+    "market": "All",
+    "audience": "All",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this (or leave null: scripts/run_in_app_reviews_report.py can run this workflow entirely inside GitHub Actions, no chat required).",
+    "readiness_rule": "Ready once both weeks of the biweekly period are fully elapsed (Sunday-Saturday x2).",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "active",
+    "notes": "Live per-cohort trend also shown directly on Home (modules/data_loader.load_review_feedback) - this topic's runs are the archival/downloadable snapshot per period, same underlying Snowflake queries."
+  },
+  {
+    "id": "wf-no-rides-after-signup",
+    "topic": "No Rides After Sign-Up (Passengers)",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "Snowflake",
+    "cadence": "biweekly",
+    "market": "All",
+    "audience": "Passenger",
+    "claude_reference": null,
+    "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this (or leave null: scripts/run_no_rides_after_signup.py can run this workflow entirely inside GitHub Actions, no chat required).",
+    "readiness_rule": "Ready once period_end + 14 days <= today, so every signup in the period has had its full 14-day window elapse.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "active",
+    "business_definition": {
+      "signup_event": "PASSENGERS.VPASSENGERSPROFILE.SIGNUPDATE",
+      "first_ride_definition": "PASSENGERS.VPASSENGERSPROFILE.FIRSTRIDE (a completed ride, not FIRSTREQUEST)",
+      "window_days": 14,
+      "eligibility": "PHONECOUNTRYCODE IN ('SA','JO'); ISTEST excluded",
+      "confirmed_by": "rose.alnirab@jeeny.me on 2026-09-22"
+    }
+  },
+  {
+    "id": "adhoc-driver-onboarding-friction-quick-look",
+    "topic": "Driver Onboarding Friction - Quick Look",
+    "owner": "rose.alnirab@jeeny.me",
+    "source": "Manual",
+    "cadence": "on-demand",
+    "market": "All",
+    "audience": "All",
+    "claude_reference": null,
+    "readiness_rule": "Ad hoc - published immediately on submission.",
+    "preferred_formats": [
+      "dashboard_html"
+    ],
+    "status": "active"
+  }
+]

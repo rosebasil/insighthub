@@ -23,7 +23,7 @@ from typing import Any
 
 REFRESH_META_PATH = Path(__file__).resolve().parent.parent / "data" / "refresh_meta.json"
 
-SOURCES = ["snowflake", "surveymonkey", "dashboards"]
+SOURCES = ["snowflake", "snowflake_no_rides", "surveymonkey", "dashboards", "drive"]
 
 
 def _load() -> dict[str, Any]:

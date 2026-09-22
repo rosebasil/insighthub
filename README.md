@@ -12,6 +12,14 @@ requires a manual JSON edit for routine updates. See "Connecting real data
 sources" below for exactly what's live, what's still blocked, and the
 one-time admin actions needed to finish activating each one.
 
+On top of those two, the **research register** (`data/research_register.json`
++ `dashboard_files/runs/`) is a general publishing pipeline for *any*
+recurring or ad hoc research topic — weekly/biweekly SurveyMonkey studies,
+biweekly Snowflake analyses, and anything added later. See "The research
+register & publishing pipeline" below for how a topic's periodic output
+(from a script, a scheduled Claude chat, or a person) shows up in the
+Studies Library automatically.
+
 ## Requirements
 
 - Python 3.10+
@@ -41,30 +49,47 @@ views/
                                   #   cards, cohort highlights, in-app reviews & feedback,
                                   #   survey tracker, fieldwork & quality (compact), recent
                                   #   studies/dashboards
-  studies.py                     # Searchable/filterable studies catalogue
+  studies.py                     # Studies Library: topic -> reporting runs -> files (the
+                                  #   research register) + "Add ad hoc study" + legacy catalogue
   dashboards.py                  # Dashboard catalogue + inline HTML viewer
   fieldwork.py                   # Full MSU/DIF + fieldwork history (detail page)
   weekly.py                      # Weekly digest - major changes & recommended next steps
   about.py                       # Scope, privacy, roadmap
 modules/
-  data_loader.py                 # ALL data access goes through here - week-scoped and
-                                  #   full-history loaders, filter helpers, graceful
-                                  #   fallback logic
-  snowflake_client.py            # Real Snowflake connector (in-app reviews & feedback) -
-                                  #   every function returns (data, error), never raises
+  data_loader.py                 # ALL data access for Home/Dashboards/Fieldwork/Weekly goes
+                                  #   through here - week-scoped and full-history loaders,
+                                  #   filter helpers, graceful fallback logic
+  register.py                    # The research register + run manifests (topic catalogue +
+                                  #   discover_runs()) - framework-agnostic, used by both
+                                  #   views/studies.py and standalone scripts/ - see below
+  snowflake_client.py            # Real Snowflake connector (in-app reviews & feedback, plus
+                                  #   no-rides-after-signup) - every function returns
+                                  #   (data, error), never raises
   surveymonkey_client.py         # SurveyMonkey v3 API connector - UNTESTED, see below
+  drive_client.py                # Google Drive connector (service-account, NOT the claude.ai
+                                  #   chat connector) for the run-publishing pipeline - see below
+  claude_client.py               # Optional "Analyze with Claude" helper for the ad hoc study
+                                  #   form (Anthropic API, separate from Drive/Snowflake)
   refresh_state.py               # Tracks last-successful-refresh per source (data/refresh_meta.json)
   styles.py                      # Jeeny brand colors/logos + shared UI helpers (incl. esc()
                                   #   for HTML-escaping data-derived text)
 scripts/
-  refresh_snowflake_data.py      # Standalone script: pulls Snowflake data, writes it atomically
+  refresh_snowflake_data.py      # Standalone script: pulls Snowflake feedback data, writes it atomically
   refresh_surveymonkey_data.py   # Standalone script: discovers/refreshes SurveyMonkey surveys
+  run_no_rides_after_signup.py   # Standalone script: biweekly no-rides-after-signup run -> register
+  run_in_app_reviews_report.py   # Standalone script: biweekly in-app-reviews report run -> register
+  sync_drive_runs.py             # Standalone script: mirrors the shared Drive folder into
+                                  #   dashboard_files/runs/ for the register to discover
 .github/workflows/
-  refresh_snowflake.yml          # Scheduled (every 6h) + manual - runs the Snowflake script
-  refresh_surveymonkey.yml       # Scheduled (every 6h) + manual - runs the SurveyMonkey script
+  refresh_snowflake.yml            # Scheduled (every 6h) + manual - Snowflake feedback refresh
+  refresh_surveymonkey.yml         # Scheduled (every 6h) + manual - SurveyMonkey refresh
+  run_no_rides_after_signup.yml    # Scheduled (Mondays) + manual - no-rides-after-signup run
+  run_in_app_reviews_report.yml    # Scheduled (Mondays) + manual - in-app-reviews report run
+  sync_drive_runs.yml              # Scheduled (every 3h) + manual - Drive -> register sync
 data/
-  studies.json                   # Studies Library content
+  studies.json                   # Legacy narrative studies catalogue (pre-dates the register)
   dashboards.json                # Dashboard catalogue content (curated + auto-discovered, see below)
+  research_register.json         # The workflow catalogue (topics) - see "research register" below
   highlights.json                # Per-cohort highlights, by week (DX_KSA/DX_JOR/PAX_KSA/PAX_JOR)
   surveys.json                   # Surveys, by week (sent/responses/linked dashboard/status)
   issues.json                    # WhatsApp & technical issues log, by week
@@ -78,8 +103,13 @@ data/
                                   #   "Last successful refresh" indicator
 dashboard_files/
   driver_voice_radar.html        # Sample embedded dashboard (demo)
-  generated/                     # Auto-discovered generated dashboards (see below) - drop a
-                                  #   <slug>.html + <slug>.meta.json pair here, no code change
+  generated/                     # Auto-discovered generated dashboards (legacy path, see below) -
+                                  #   drop a <slug>.html + <slug>.meta.json pair here, no code change
+  runs/                          # The research register's run manifests + output files, one
+                                  #   subfolder per workflow_id - see "research register" below
+docs/
+  PUBLISH_TO_INSIGHTS_HUB.md     # Copy-paste instruction block for your existing Claude chats
+                                  #   / Cowork tasks / Project instructions - see below
 assets/
   logo-passenger.png             # full Jeeny logo, pink - passenger brand
   logo-driver.png                # full Jeeny logo, purple - driver brand
@@ -226,6 +256,141 @@ bug), so until that's resolved a fired session can build a dashboard from
 whatever's already on disk (`data/*.json`, the real Snowflake snapshot) but
 can't run a fresh live Snowflake query itself.
 
+### The research register & publishing pipeline
+
+This is the general mechanism behind "every recurring or ad hoc study
+shows up in the Studies Library automatically" - it's what
+`wf-in-app-reviews` and `wf-no-rides-after-signup` (below) and the ad hoc
+study form both publish through, and it's designed so a Claude chat or
+Cowork task can publish into it too, without ever touching this repo
+directly.
+
+**Two files:**
+
+- `data/research_register.json` - the topic catalogue. One row per
+  recurring or ad hoc topic: `id`, `topic`, `owner`, `source`
+  (`SurveyMonkey`/`Snowflake`/`Mixed`/`Manual`), `cadence`
+  (`weekly`/`biweekly`/`on-demand`), `market`, `audience`,
+  `claude_reference` (a chat/task URL or name, or `null`), `readiness_rule`
+  (plain text - when this topic's next period is actually safe to report),
+  `preferred_formats`, and `status`.
+- `dashboard_files/runs/<workflow_id>/<run_id>.meta.json` (+ its output
+  file(s), same folder) - one manifest per completed run. Required fields:
+  `run_id`, `workflow_id`, `topic`, `source`, `owner`, `cadence`,
+  `period_start`, `period_end`, `data_as_of`, `status`
+  (`published`/`failed`/`needs_review`), and `files` (a list of
+  `{format, path}`, `format` one of `dashboard_html`/`pptx`/`docx`/`pdf`/`link`).
+  See `modules/register.py`'s module docstring and `_RUN_REQUIRED_FIELDS`
+  for the exact schema, and `docs/PUBLISH_TO_INSIGHTS_HUB.md` for a
+  ready-to-paste description of it.
+
+`modules/register.discover_runs()` scans that folder tree on every page
+load - a manifest missing a required field, pointing at a file that
+doesn't exist, or reusing another run's `run_id` is returned under
+`needs_review` and never shown as published (visible in a "N run(s) need
+review" expander at the bottom of the Studies Library). A revised run
+(same `run_id`, re-published) replaces the old one rather than
+duplicating - `run_id` should encode the period so re-runs are naturally
+idempotent (e.g. `wf-no-rides-after-signup-2026-08-23`).
+
+**Three ways a run gets published:**
+
+1. **A standalone script**, entirely inside GitHub Actions, no Claude
+   chat involved - `scripts/run_no_rides_after_signup.py` and
+   `scripts/run_in_app_reviews_report.py` are the two live examples:
+   query Snowflake, build an HTML report, call
+   `modules/register.save_run()`. Use this pattern for any workflow
+   Snowflake alone can fully answer.
+2. **The "Add ad hoc study" form** in the Studies Library - manual entry
+   (title, objective, owner, date, market, audience, findings, source)
+   plus a file upload or report link, calling the same `save_run()`.
+   Works completely without Claude; an optional "Analyze with Claude"
+   button offers a short synthesis if `[anthropic]` is configured (see
+   below) - never required.
+3. **A Claude chat or Cowork task with the Drive connector**, for
+   workflows that need a chat's judgment (SurveyMonkey analysis, anything
+   Snowflake alone can't answer). See "Google Drive - the chat-publishing
+   pipeline" below and `docs/PUBLISH_TO_INSIGHTS_HUB.md` for the exact
+   instruction to paste into that chat/task.
+
+### Google Drive - the chat-publishing pipeline (built, blocked)
+
+**Important distinction:** the "Google Drive" connector you can turn on
+inside a claude.ai chat lets *that chat* read/search/upload Drive files
+during the conversation - it has no way to reach this deployed app. This
+app instead uses a second, independent Drive connection: a Google Cloud
+**service account** (`modules/drive_client.py`), authenticated with its
+own credentials, that only this app and `scripts/sync_drive_runs.py` use
+to read files back out of a shared folder. A chat's Drive connector and
+this service account happen to point at the same folder; they are
+otherwise unrelated systems. Currently **not connected** - no Drive
+credentials are configured in this environment.
+
+**The one-time setup:**
+
+1. In Google Cloud Console, create a **service account** and download its
+   JSON key (IAM & Admin → Service Accounts → your account → Keys → Add
+   key → JSON).
+2. Create (or reuse) a **shared Drive folder** for published runs, and
+   **share it with the service account's email**
+   (`name@project.iam.gserviceaccount.com`, found in the key JSON) -
+   Viewer access is enough, since this app only reads.
+3. Add two GitHub Actions repository secrets: `GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON`
+   (the entire key JSON, as one string) and `GOOGLE_DRIVE_FOLDER_ID` (the
+   folder's id, from its URL). The scheduled workflow
+   (`.github/workflows/sync_drive_runs.yml`, every 3 hours + manual
+   dispatch) will start mirroring it into `dashboard_files/runs/`.
+4. For local dev, or a deployed app reading Drive directly, add the same
+   two values under `[google_drive]` in `.streamlit/secrets.toml` (see
+   `.streamlit/secrets.toml.example`).
+5. **Also share the same folder** (and enable the Drive connector) with
+   every Claude chat/Cowork task that should publish into it, and paste
+   `docs/PUBLISH_TO_INSIGHTS_HUB.md`'s instruction block into each one's
+   Project instructions or task prompt.
+
+**What Claude Code cannot do here:** this session has no way to list,
+read, or edit your claude.ai chats, projects, or Cowork tasks - they're a
+separate product surface with no tool this session can reach. Identifying
+which of your existing chats/tasks run which recurring study, and pasting
+the publish instruction into them, needs to happen from your side. Every
+row in `data/research_register.json` that doesn't yet have a
+`claude_reference` says so explicitly (`claude_reference_note`) instead
+of silently leaving it blank.
+
+### No Rides After Sign-Up (Passengers) - business definition
+
+Confirmed with the hub's owner on 2026-09-22, not invented - the real
+columns were inspected via `INFORMATION_SCHEMA` first (see
+`modules/snowflake_client.py`'s comment above `fetch_no_rides_after_signup`):
+
+- **Audience:** passengers only.
+- **Signup event:** `PASSENGERS.VPASSENGERSPROFILE.SIGNUPDATE`.
+- **First-ride definition:** `FIRSTRIDE` (a *completed* ride) - not
+  `FIRSTREQUEST`, which is only a request and may never convert.
+- **Window:** 14 days after `SIGNUPDATE`.
+- **"No ride":** `FIRSTRIDE IS NULL` once the full 14-day window has
+  elapsed. A period only counts once `period_end + 14 days <= today`
+  (`modules/register.is_period_ready()`) - counting a signup before its
+  window closes would understate the no-ride rate.
+- **Eligibility (data hygiene, not a business choice):** `PHONECOUNTRYCODE
+  IN ('SA', 'JO')`, `ISTEST` excluded.
+
+If this definition ever needs to change (a different window, including
+drivers, a different first-ride definition), update both
+`modules/snowflake_client.py`'s query and `scripts/run_no_rides_after_signup.py`'s
+docstring together, and record who confirmed the change and when in
+`data/research_register.json`'s `business_definition.confirmed_by`.
+
+### Analyze with Claude (optional, ad hoc studies only)
+
+The "Add ad hoc study" form's "Analyze with Claude" button calls the
+Anthropic API directly (`modules/claude_client.py`) to offer a short
+synthesis of the objective/findings you typed - entirely optional, and
+the form saves with or without it. Add an API key under `[anthropic]` in
+`.streamlit/secrets.toml` (see `.streamlit/secrets.toml.example`) to
+enable it; without one, the button is replaced with a plain "not
+configured" note.
+
 ### Refresh status, error reporting, and deduplication
 
 - `data/refresh_meta.json` records `status` (`ok`/`error`/`manual_snapshot`),
@@ -240,8 +405,10 @@ can't run a fresh live Snowflake query itself.
 - Deduplication is by the source's own stable ID, never by name or position:
   Snowflake rows are recomputed per (week, cohort) range query (idempotent —
   re-running never double-counts), SurveyMonkey surveys are matched by their
-  numeric `surveymonkey_id`, and generated dashboards are matched by the
-  `id` field in their `meta.json`.
+  numeric `surveymonkey_id`, generated dashboards are matched by the `id`
+  field in their `meta.json`, and research-register runs are matched by
+  their `run_id` (`modules/register.discover_runs()` — a re-published
+  `run_id` replaces the prior run instead of duplicating it).
 - Both scheduled scripts write atomically (`tempfile.mkstemp` +
   `os.replace`) and leave existing files untouched on failure, so a failed
   run never corrupts or half-writes the data the deployed app is reading.
@@ -251,7 +418,15 @@ can't run a fresh live Snowflake query itself.
 Everything else you need to replace lives in `/data` and `/dashboard_files`
 — no code changes required for routine updates.
 
-### Add or edit a study
+**For a new ad hoc study, use the "+ Add ad hoc study" form in the Studies
+Library instead of editing `data/studies.json` by hand** — it writes into
+the research register through the same path a scheduled script or a
+Claude chat uses, so it shows up identically (topic → runs → files),
+supports attaching a PPT/DOC/PDF or pasting a report link, and needs no
+JSON editing at all. The `data/studies.json` instructions below are kept
+for the studies already logged there before the register existed.
+
+### Add or edit a legacy study
 
 Edit `data/studies.json` and add a new object following the existing schema:
 
@@ -361,8 +536,15 @@ Once you replace sample content with real data, set `"is_sample_data": false`
   number.
 - The Snowflake connector only ever runs aggregate/count queries — no raw
   comment text or personal identifier is selected, stored in this repo, or
-  rendered in the UI, including in AI-written summaries.
+  rendered in the UI, including in AI-written summaries. This includes
+  `fetch_no_rides_after_signup()` — it returns per-market counts only,
+  never a `PASSENGERID` or row-level record.
 - Mask any personal identifiers before adding them to `data/*.json`.
+- Files uploaded through the "Add ad hoc study" form, or synced from the
+  shared Drive folder, are **not** automatically scanned for personal
+  identifiers — whoever uploads a PPT/DOC/PDF/HTML file is responsible for
+  making sure it doesn't contain one, the same as any other file added to
+  this repo.
 - Real Snowflake and SurveyMonkey credentials never live in this repo — they
   go in GitHub Actions repository secrets and/or `.streamlit/secrets.toml`
   (gitignored). Only `.streamlit/secrets.toml.example`, with placeholder
@@ -374,6 +556,7 @@ Once you replace sample content with real data, set `"is_sample_data": false`
 - User login / permissions
 - A live Power BI connection (dashboards are either bundled HTML exports or
   auto-discovered generated files — see above)
-- AI-generated answers or a chatbot beyond the scheduled dashboard-generation
-  Routine described above
+- Claude Code reading your claude.ai chats, projects, or Cowork tasks
+  directly — no tool in this environment can reach them; publishing from
+  a chat goes through the Drive pipeline above instead
 - Action-management / task tracking

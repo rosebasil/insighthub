@@ -1,0 +1,29 @@
+{
+  "run_id": "wf-no-rides-after-signup-2026-08-23",
+  "workflow_id": "wf-no-rides-after-signup",
+  "topic": "No Rides After Sign-Up (Passengers)",
+  "source": "Snowflake",
+  "owner": "rose.alnirab@jeeny.me",
+  "cadence": "biweekly",
+  "period_start": "2026-08-23",
+  "period_end": "2026-09-05",
+  "market": "All",
+  "audience": "Passenger",
+  "data_as_of": "2026-09-22T12:10:00+00:00",
+  "output_formats": [
+    "dashboard_html"
+  ],
+  "version": 1,
+  "source_references": [
+    "JEENY_PROD.PASSENGERS.VPASSENGERSPROFILE"
+  ],
+  "status": "published",
+  "generated_at": "2026-09-22T12:10:00+00:00",
+  "generated_by": "manual real Snowflake pull via Claude interactive session, 2026-09-22 (same validated query as fetch_no_rides_after_signup - automated path pending SNOWFLAKE_* credentials, see README)",
+  "files": [
+    {
+      "format": "dashboard_html",
+      "path": "wf-no-rides-after-signup-2026-08-23.html"
+    }
+  ]
+}

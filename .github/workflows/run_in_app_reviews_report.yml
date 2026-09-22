@@ -1,0 +1,48 @@
+name: Run In-App Reviews report (biweekly)
+
+# Biweekly Snowflake-only workflow producing the archival/downloadable
+# report counterpart to the live Home page trend - see
+# scripts/run_in_app_reviews_report.py. Publishes into
+# dashboard_files/runs/wf-in-app-reviews/ through modules/register.save_run().
+#
+# Requires the same Snowflake secrets as refresh_snowflake.yml:
+#   SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PASSWORD
+# Optional: SNOWFLAKE_ROLE, SNOWFLAKE_WAREHOUSE
+
+on:
+  schedule:
+    - cron: "30 7 * * 1"  # Monday 07:30 UTC, right after the no-rides run
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run in-app-reviews report workflow
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: python scripts/run_in_app_reviews_report.py
+
+      - name: Commit published run if changed
+        run: |
+          git config user.name "jeeny-insights-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add dashboard_files/runs/wf-in-app-reviews/ data/refresh_meta.json
+          git diff --cached --quiet || git commit -m "Automated: in-app-reviews biweekly report run [skip ci]"
+          git push

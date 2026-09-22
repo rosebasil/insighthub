@@ -1,0 +1,49 @@
+name: Sync workflow runs from Drive
+
+# Scheduled ingestion for the research register's "Publish to Insights
+# Hub" pipeline: mirrors dashboard_files/runs/ from a shared Drive
+# folder that Claude chats/Cowork tasks (with the Drive connector and
+# the docs/PUBLISH_TO_INSIGHTS_HUB.md instruction) write completed runs
+# into, then commits whatever new/updated files land. No one downloads a
+# Claude file and re-uploads it by hand.
+#
+# Requires these repository secrets (Settings -> Secrets and variables ->
+# Actions) - see README.md "Connecting real data sources" for the exact
+# one-time Drive setup:
+#   GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON   the full service-account key JSON
+#   GOOGLE_DRIVE_FOLDER_ID              the shared folder's Drive id
+
+on:
+  schedule:
+    - cron: "15 */3 * * *"  # every 3 hours
+  workflow_dispatch: {}     # allow a manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Drive sync
+        env:
+          GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+        run: python scripts/sync_drive_runs.py
+
+      - name: Commit synced runs if changed
+        run: |
+          git config user.name "jeeny-insights-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add dashboard_files/runs/ data/refresh_meta.json
+          git diff --cached --quiet || git commit -m "Automated: sync workflow runs from Drive [skip ci]"
+          git push

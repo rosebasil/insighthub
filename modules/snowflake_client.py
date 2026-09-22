@@ -200,3 +200,66 @@ def fetch_theme_counts_range(
         {"range_start": start_dt, "range_end_exclusive": end_exclusive_dt},
         credentials=credentials,
     )
+
+
+# --------------------------------------------------------------------------
+# No rides after sign-up (passengers)
+#
+# Business definition, confirmed with the hub's owner on 2026-09-22 (not
+# invented - see PASSENGERS.VPASSENGERSPROFILE's real columns, verified
+# via INFORMATION_SCHEMA before this was written):
+#   - Audience: passengers only.
+#   - Signup event: SIGNUPDATE.
+#   - First-ride definition: FIRSTRIDE (a completed ride) - NOT
+#     FIRSTREQUEST, which is only a ride request and may never convert.
+#   - Window: NO_RIDES_WINDOW_DAYS (14) days after SIGNUPDATE.
+#   - "No ride" = FIRSTRIDE IS NULL. A passenger only belongs in a
+#     reporting period once their full window has elapsed (see
+#     modules/register.is_period_ready()) - counting them earlier would
+#     understate the no-ride rate for anyone who just hasn't had time to
+#     ride yet.
+#   - Eligibility: PHONECOUNTRYCODE IN ('SA', 'JO') (the app's two
+#     markets), ISTEST excluded. This is a data-hygiene filter, not a
+#     business-metric choice, so it wasn't part of the question asked.
+# Aggregate-only, like the feedback queries above - no PASSENGERID is
+# ever selected.
+# --------------------------------------------------------------------------
+
+NO_RIDES_TABLE = "JEENY_PROD.PASSENGERS.VPASSENGERSPROFILE"
+NO_RIDES_WINDOW_DAYS = 14
+
+_NO_RIDES_MARKET_CASE = "CASE WHEN PHONECOUNTRYCODE = 'SA' THEN 'KSA' WHEN PHONECOUNTRYCODE = 'JO' THEN 'Jordan' END"
+
+_NO_RIDES_SQL = f"""
+    SELECT
+        {_NO_RIDES_MARKET_CASE} AS MARKET,
+        COUNT(*) AS SIGNUPS,
+        COUNT(CASE WHEN FIRSTRIDE IS NULL THEN 1 END) AS NO_RIDE_COUNT,
+        COUNT(CASE WHEN FIRSTRIDE IS NOT NULL AND DATEDIFF(day, SIGNUPDATE, FIRSTRIDE) <= %(window_days)s THEN 1 END) AS RODE_WITHIN_WINDOW_COUNT
+    FROM {NO_RIDES_TABLE}
+    WHERE SIGNUPDATE >= %(period_start)s AND SIGNUPDATE < %(period_end_exclusive)s
+      AND PHONECOUNTRYCODE IN ('SA', 'JO')
+      AND (ISTEST IS NULL OR ISTEST = FALSE)
+    GROUP BY 1
+"""
+
+
+def fetch_no_rides_after_signup(
+    period_start: date,
+    period_end_inclusive: date,
+    window_days: int = NO_RIDES_WINDOW_DAYS,
+    credentials: dict[str, Any] | None = None,
+) -> tuple[list[dict[str, Any]] | None, str | None]:
+    """Return (rows, error) for passengers who signed up in [period_start,
+    period_end_inclusive]. Each row: {MARKET, SIGNUPS, NO_RIDE_COUNT,
+    RODE_WITHIN_WINDOW_COUNT}. Callers should only treat a period as
+    reportable once modules/register.is_period_ready(period_end_inclusive,
+    window_days) is True - this function itself doesn't enforce that, so
+    it can also be used to preview an in-progress period.
+    """
+    start_dt, end_exclusive_dt = _range_bounds(period_start, period_end_inclusive)
+    return _run(
+        _NO_RIDES_SQL,
+        {"period_start": start_dt, "period_end_exclusive": end_exclusive_dt, "window_days": window_days},
+        credentials=credentials,
+    )

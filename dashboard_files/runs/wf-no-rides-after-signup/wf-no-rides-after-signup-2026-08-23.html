@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>No Rides After Sign-Up - 2026-08-23 to 2026-09-05</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 32px; background: #F7F7F9; color: #1A1347; }
+  h1 { color: #662D91; font-size: 22px; margin-bottom: 4px; }
+  .caption { color: #6B6B76; font-size: 13px; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  th, td { padding: 12px 16px; text-align: left; font-size: 14px; }
+  th { background: #662D91; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) { background: #FAFAFC; }
+  tfoot td { font-weight: 700; border-top: 2px solid #662D91; }
+  .note { margin-top: 20px; font-size: 12px; color: #A7A9AC; }
+</style>
+</head>
+<body>
+  <h1>No Rides After Sign-Up - Passengers</h1>
+  <div class="caption">
+    Period 2026-08-23 to 2026-09-05 &middot;
+    Data as of 2026-09-22T12:10:00+00:00 &middot;
+    Source: JEENY_PROD.PASSENGERS.VPASSENGERSPROFILE (Snowflake)
+  </div>
+  <table>
+    <thead>
+      <tr><th>Market</th><th>Signups</th><th>No ride (14d)</th><th>No-ride rate</th><th>Rode within 14d</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Jordan</td>
+          <td>21,279</td>
+          <td>11,585</td>
+          <td>54.4%</td>
+          <td>9,420</td>
+        </tr>
+        <tr>
+          <td>KSA</td>
+          <td>69,405</td>
+          <td>37,854</td>
+          <td>54.5%</td>
+          <td>30,610</td>
+        </tr>
+    </tbody>
+    <tfoot>
+      <tr><td>All markets</td><td>90,684</td><td>49,439</td><td>54.5%</td><td>41,245</td></tr>
+    </tfoot>
+  </table>
+  <div class="note">
+    Definition: a passenger counts as "no ride" if FIRSTRIDE is still null 14 days after SIGNUPDATE.
+    Excludes test accounts (ISTEST). Markets: KSA and Jordan only (PHONECOUNTRYCODE SA/JO).
+    Aggregate counts only - no passenger-level data is included in this report.
+  </div>
+</body>
+</html>

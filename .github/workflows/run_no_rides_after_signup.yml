@@ -1,0 +1,51 @@
+name: Run No Rides After Sign-Up (biweekly)
+
+# Biweekly Snowflake-only workflow (no Drive involved) - see the
+# business definition documented above
+# modules/snowflake_client.fetch_no_rides_after_signup and in
+# scripts/run_no_rides_after_signup.py. Publishes straight into
+# dashboard_files/runs/wf-no-rides-after-signup/ through
+# modules/register.save_run(), same discovery path as everything else.
+#
+# Requires these repository secrets (Settings -> Secrets and variables ->
+# Actions) - the same Snowflake credentials refresh_snowflake.yml uses:
+#   SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PASSWORD
+# Optional: SNOWFLAKE_ROLE, SNOWFLAKE_WAREHOUSE
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"  # Monday 07:00 UTC - by then the prior Sat-ending period's 14-day window has usually just closed
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run no-rides-after-signup workflow
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: python scripts/run_no_rides_after_signup.py
+
+      - name: Commit published run if changed
+        run: |
+          git config user.name "jeeny-insights-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add dashboard_files/runs/wf-no-rides-after-signup/ data/refresh_meta.json
+          git diff --cached --quiet || git commit -m "Automated: no-rides-after-signup biweekly run [skip ci]"
+          git push
