@@ -357,6 +357,46 @@ row in `data/research_register.json` that doesn't yet have a
 `claude_reference` says so explicitly (`claude_reference_note`) instead
 of silently leaving it blank.
 
+### Google Sheets - WhatsApp & technical issues (built, ready to connect)
+
+The Home page's "WhatsApp & technical issues" panel (and the "Open
+critical issues" stat card) reads from `modules/sheets_client.py`, a
+**read-only** Google Sheets connector, whenever `st.secrets['google_sheets']`
+is configured; otherwise it falls back to the `data/issues.json` snapshot,
+same fallback pattern as Snowflake/SurveyMonkey/Drive. It never writes
+back to the sheet.
+
+The sheet just needs a header row with a date column and a description
+column - column order doesn't matter, and header names are matched
+loosely (see the `_HEADER_ALIASES` table at the top of
+`modules/sheets_client.py`): a "Date"/"Logged"/"Timestamp" column, a
+"Market"/"Country" column (KSA/Saudi Arabia -> KSA, JO/Jordan -> Jordan),
+"Category", "Status" (New/Under review/Reported out/Closed), "Description",
+and optionally "Audience" (driver/passenger) + "Reference ID" (a **masked
+internal case code only** - never a phone number, per the Privacy section
+below). The app derives each row's reporting week from its date, so the
+sheet never needs to know the app's internal week id format.
+
+**The one-time setup:**
+
+1. Reuse the same service account as "Google Drive" above, or create a
+   new one (IAM & Admin -> Service Accounts -> Keys -> Add key -> JSON).
+2. **Share the WhatsApp/technical-issues tracking sheet** with that
+   service account's email (`name@project.iam.gserviceaccount.com`) -
+   Viewer access is enough.
+3. Add `[google_sheets]` to `.streamlit/secrets.toml` (see
+   `.streamlit/secrets.toml.example`): `spreadsheet_id` (from the sheet's
+   URL), `service_account_json` (the full key JSON), and optionally
+   `worksheet_range` if the data isn't on the first tab.
+4. Reload the app - the panel switches from "Sample data" to "Live from
+   Google Sheets" automatically once `sheets_client.is_configured()` is
+   true, with a 15-minute cache so the team sees new WhatsApp-logged
+   issues without hammering the Sheets API on every page load.
+
+Not yet connected in this environment - no Sheets credentials are
+configured here, so the panel currently shows the `data/issues.json`
+sample snapshot.
+
 ### No Rides After Sign-Up (Passengers) - business definition
 
 Confirmed with the hub's owner on 2026-09-22, not invented - the real
@@ -491,7 +531,10 @@ to an "Open" button:
   fabricating a completion percentage. Only `status: "published"` rows
   appear anywhere in the app (`status: "draft"` is how newly-discovered
   SurveyMonkey surveys stay hidden until someone finishes setting them up).
-- `data/issues.json` — one object per manually-logged issue
+- `data/issues.json` — the **offline fallback** for the WhatsApp &
+  technical issues panel, used only when `st.secrets['google_sheets']`
+  isn't configured (see "Connecting real data sources" -> Google Sheets
+  above for the live path). One object per manually-logged issue
   (`source`: `KSA`/`JO`, `category`: `Tech`/`Feedback`/`Fraud signal`,
   `status`: `New`/`Under review`/`Reported out`/`Closed`). Set
   `reference_type` (`"driver"` or `"passenger"`) and `reference_id` to a

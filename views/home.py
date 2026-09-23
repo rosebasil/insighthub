@@ -347,6 +347,40 @@ else:
 
 st.divider()
 
+# --- WhatsApp & technical issues ------------------------------------------
+st.markdown("#### WhatsApp & technical issues")
+issues_mode_info = dl.issues_source_mode()
+issues_mode = issues_mode_info["mode"]
+if issues_mode == "unavailable":
+    st.error(f"Live Google Sheets issues data is not reachable right now: {issues_mode_info['error']}")
+else:
+    week_issues = dl.load_issues(selected_week_id, market, audience)
+    issues_badge = "Live from Google Sheets" if issues_mode == "live" else "Sample data"
+    st.caption(
+        f"{issues_badge} · manually logged WhatsApp group reports & technical issues, "
+        "this reporting week - internal use only"
+    )
+    if not week_issues:
+        st.caption("No issues logged for this week.")
+    else:
+        counts = dl.issue_status_counts(week_issues)
+        st.markdown(styles.status_bar_html(counts), unsafe_allow_html=True)
+        legend_bits = " &nbsp;&middot;&nbsp; ".join(
+            f'<span style="color:{styles.STATUS_HEX.get(s, styles.COOL_GRAY)};font-weight:600;">{styles.esc(s)}</span> {counts[s]}'
+            for s in dl.ISSUE_STATUSES
+            if counts.get(s)
+        )
+        st.markdown(
+            f"<div style='font-size:12px;margin:4px 0 10px;'>{legend_bits}</div>",
+            unsafe_allow_html=True,
+        )
+        for issue in week_issues:
+            st.markdown(styles.issue_card_html(issue), unsafe_allow_html=True)
+    if issues_mode == "snapshot":
+        styles.sample_data_caption()
+
+st.divider()
+
 # --- Survey tracker ---------------------------------------------------
 st.markdown("#### Survey tracker")
 if not surveys_this_week:

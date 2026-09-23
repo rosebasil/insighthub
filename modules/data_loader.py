@@ -15,6 +15,11 @@ Live today:
       directly via modules/snowflake_client.py when st.secrets['snowflake']
       is configured, falling back to data/sentiment_summary.json +
       data/sentiment_themes.json otherwise.
+    - WhatsApp/technical issues (load_issues / load_open_issues) read
+      directly, read-only, from the team's Google Sheet via
+      modules/sheets_client.py when st.secrets['google_sheets'] is
+      configured, falling back to data/issues.json otherwise - see
+      issues_source_mode().
 
 Planned automation (v2+) - not wired up yet, exist so the next engineer
 can implement one function at a time without touching Streamlit page code:
@@ -307,6 +312,57 @@ def _load_issues_raw() -> list[dict[str, Any]]:
         return json.load(f)
 
 
+@st.cache_data(ttl=900, show_spinner="Reading the issues sheet...")
+def _fetch_issues_live_cached():
+    """Cached for 15 minutes. Returns (rows, error) from
+    sheets_client.fetch_issues() - rows are shaped like data/issues.json's
+    entries minus `id`/`week_id`."""
+    from . import sheets_client
+
+    return sheets_client.fetch_issues()
+
+
+def _issues_catalog() -> dict[str, Any]:
+    """Every WhatsApp/technical issue across all weeks, each tagged with
+    a derived week_id and a stable id. Tries a live, read-only pull from
+    the team's Google Sheet (st.secrets['google_sheets']) first via
+    modules/sheets_client.py, falling back to the data/issues.json
+    snapshot otherwise. The sheet only needs a date column, not a
+    week_id - each row's reporting week is derived with
+    week_id_for_date(), so the sheet stays decoupled from the app's
+    internal week id format. A row whose date can't be parsed is dropped.
+
+    Returns {"mode": "live" | "snapshot" | "unavailable", "error": str |
+    None, "issues": [...]}.
+    """
+    from . import sheets_client
+
+    if sheets_client.is_configured():
+        rows, error = _fetch_issues_live_cached()
+        if error is not None:
+            return {"mode": "unavailable", "error": error, "issues": []}
+        issues: list[dict[str, Any]] = []
+        for idx, row in enumerate(rows):
+            try:
+                logged = date.fromisoformat(row["logged_date"])
+            except (KeyError, ValueError):
+                continue
+            issues.append({**row, "id": f"sheet-{idx}", "week_id": week_id_for_date(logged)})
+        issues.sort(key=lambda i: i["logged_date"], reverse=True)
+        return {"mode": "live", "error": None, "issues": issues}
+
+    return {"mode": "snapshot", "error": None, "issues": _load_issues_raw()}
+
+
+def issues_source_mode() -> dict[str, Any]:
+    """{"mode": "live" | "snapshot" | "unavailable", "error": str | None}
+    describing where load_issues()/load_open_issues() data is currently
+    coming from, for the Home page panel's source caption - cached, so
+    calling this doesn't trigger an extra Sheets read."""
+    catalog = _issues_catalog()
+    return {"mode": catalog["mode"], "error": catalog["error"]}
+
+
 _ISSUE_SOURCE_TO_MARKET = {"KSA": "KSA", "JO": "Jordan"}
 _ISSUE_REF_TYPE_TO_AUDIENCE = {"driver": "Driver", "passenger": "Passenger"}
 
@@ -322,17 +378,20 @@ def _issue_matches_filters(issue: dict[str, Any], market: str, audience: str) ->
 
 
 def load_issues(week_id: str, market: str = "All", audience: str = "All") -> list[dict[str, Any]]:
-    """Return WhatsApp/technical issues manually logged for the given
-    week, most recent first. Each item may carry a masked
-    reference_type/reference_id ("driver" or "passenger" + an internal
-    case code) - never a phone number or other personal identifier, per
-    the privacy rules in README.md. An issue with no reference_type (a
-    general/technical one, not tied to one person) always passes the
-    audience filter. Reads data/issues.json.
+    """Return WhatsApp/technical issues logged for the given week, most
+    recent first. Live from the team's Google Sheet when
+    st.secrets['google_sheets'] is configured (see
+    modules/sheets_client.py), falling back to the data/issues.json
+    snapshot otherwise - call issues_source_mode() to know which. Each
+    item may carry a masked reference_type/reference_id ("driver" or
+    "passenger" + an internal case code) - never a phone number or other
+    personal identifier, per the privacy rules in README.md. An issue
+    with no reference_type (a general/technical one, not tied to one
+    person) always passes the audience filter.
     """
     items = [
         i
-        for i in _load_issues_raw()
+        for i in _issues_catalog()["issues"]
         if i["week_id"] == week_id and _issue_matches_filters(i, market, audience)
     ]
     return sorted(items, key=lambda i: i["logged_date"], reverse=True)
@@ -347,8 +406,8 @@ def load_open_issues(market: str = "All", audience: str = "All") -> list[dict[st
     """
     return [
         i
-        for i in _load_issues_raw()
-        if i["status"] in OPEN_ISSUE_STATUSES and _issue_matches_filters(i, market, audience)
+        for i in _issues_catalog()["issues"]
+        if i.get("status") in OPEN_ISSUE_STATUSES and _issue_matches_filters(i, market, audience)
     ]
 
 
