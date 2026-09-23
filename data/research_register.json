@@ -5,7 +5,7 @@
     "owner": "rose.alnirab@jeeny.me",
     "source": "SurveyMonkey",
     "cadence": "weekly",
-    "market": "All",
+    "market": "Jordan",
     "audience": "Driver",
     "claude_reference": null,
     "claude_reference_note": "Claude Code cannot list or read your claude.ai chats, projects, or Cowork tasks - paste the chat/task URL or name here once you identify which one runs this.",
@@ -13,7 +13,8 @@
     "preferred_formats": [
       "dashboard_html"
     ],
-    "status": "needs_setup"
+    "status": "active",
+    "notes": "Mapped to real SurveyMonkey survey 527368283 (\"Jordan Drivers NPS Automated Survey\", always-on collector) on 2026-09-23, confirmed via search_surveys by title/audience match - covers Jordan only, no equivalent always-on KSA Driver NPS collector was found in the account. Automated weekly runs still need SURVEYMONKEY_ACCESS_TOKEN (see modules/surveymonkey_client.py); until then, runs are pulled manually the same way this first one was."
   },
   {
     "id": "wf-passenger-nps",

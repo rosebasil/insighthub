@@ -1,0 +1,29 @@
+{
+  "run_id": "wf-driver-nps-2026-09-13",
+  "workflow_id": "wf-driver-nps",
+  "topic": "Driver NPS",
+  "source": "SurveyMonkey",
+  "owner": "rose.alnirab@jeeny.me",
+  "cadence": "weekly",
+  "period_start": "2026-09-13",
+  "period_end": "2026-09-19",
+  "market": "Jordan",
+  "audience": "Driver",
+  "data_as_of": "2026-09-23T10:20:00+00:00",
+  "output_formats": [
+    "dashboard_html"
+  ],
+  "version": 1,
+  "source_references": [
+    "SurveyMonkey survey 527368283 (\"Jordan Drivers NPS Automated Survey\")"
+  ],
+  "status": "published",
+  "generated_at": "2026-09-23T10:20:00+00:00",
+  "generated_by": "Real read-only pull via the SurveyMonkey MCP connector in a Claude interactive session, 2026-09-23 (search_surveys to find the survey, get_survey + get_responses across all pages to compute NPS from raw 0-10 answers - automated scheduled path still needs a SURVEYMONKEY_ACCESS_TOKEN, see modules/surveymonkey_client.py and README). No writes were made to SurveyMonkey.",
+  "files": [
+    {
+      "format": "dashboard_html",
+      "path": "wf-driver-nps-2026-09-13.html"
+    }
+  ]
+}
